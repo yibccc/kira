@@ -1,0 +1,31 @@
+.storedropdown{
+    position:absolute;
+}
+.dropdown{
+    position: relative;;
+    left: 450px;
+    text-align: left;
+}
+.el-select,
+.el-input,
+.el-input__inner {
+    background-color: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.50);
+    /* border: none; */
+    border-color: #000;
+    text-align: left;
+    border-radius: 4px;
+}
+.el-input__inner:hover{
+    background-color: #586987;
+}
+.el-select .el-input .el-select__caret {
+    color: #000;
+}
+.el-select .el-input .el-select__caret:hover{
+    color:#586987;
+}
+.el-select-dropdown__item.selected span{
+    color: rgba(255, 255, 255, 0.80) !important;
+    z-index: 9999;
+}

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能排班系统</title>
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css">
+    <link rel="stylesheet" href="../../styles/common.css">
+    <link rel="stylesheet" href="../../styles/page.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+    <style>
+        #employee-app .notAdmin::after{
+            border:0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" id="employee-app">
+        <div class="container">
+            <div class="tableBar">
+                <el-input
+                    v-model="input"
+                    placeholder="请输入员工姓名"
+                    style="width:250px"
+                    clearable
+                     @keyup.enter.native="handleQuery"    
+                >
+                    <i
+                        slot="prefix"
+                        class="el-input__icon el-icon-search"
+                        style="cursor:pointer"
+                        @click="handleQuery"
+                    ></i>
+                </el-input>
+                <div class="tableLab">
+                    <span class="span-btn delBut non" @click="deleteHandle('批量', null)">批量删除</span>
+                    <span class="span-btn blueBug non" @click="statusHandle('1')">批量启用</span>
+                    <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')">批量停用</span>
+                    <el-button
+                        type="primary"
+                        @click="addEmployeeHandle('add')"
+                    >
+                        + 添加员工
+                    </el-button>
+                </div>
+            </div>
+            <el-table
+                :data="tableData"
+                stripe
+                class="tableBox"
+                @selection-change="handleSelectionChange"
+            >
+                <el-table-column
+                    type="selection"
+                    width="25"
+                ></el-table-column>
+                <el-table-column
+                    prop="name"
+                    label="姓名"
+                ></el-table-column>
+                <el-table-column
+                    prop="job_id"
+                    label="职位"
+                ></el-table-column>
+                <el-table-column
+                    prop="phone"
+                    label="电话"
+                ></el-table-column>
+                <el-table-column
+                    prop="email"
+                    label="电邮"
+                ></el-table-column>
+                <el-table-column
+                    prop="store_id"
+                    label="工作门店"
+                ></el-table-column>
+
+                <el-table-column
+                        label="偏好"
+                        width="160"
+                        align="center"
+                >
+                    <template v-slot="scope">
+                        <el-button
+                                type="text"
+                                size="small"
+                                class="greenBug non"
+                                @click.native="showFlavor(scope.row)"
+                                :class="{notAdmin:user !== 'admin'}"
+                        >
+                            查看偏好
+                        </el-button>
+                    </template>
+                </el-table-column>
+                <el-dialog
+                        title="偏好详细信息"
+                        :visible.sync="DialogVisible"
+                        width="30%"
+                        :before-close="handleClose"
+                >
+                    <el-form>
+                        <el-form-item label="工作日偏好">flavorForm.workday</el-form-item>
+                        <el-form-item label="工作时间偏好">flavorFrom.worktime</el-form-item>
+                        <el-form-item label="班次时长偏好">flavorForm.duration</el-form-item>
+                    </el-form>
+                </el-dialog>
+
+                <el-table-column label="账号状态">
+                    <template v-slot="scope">
+                      {{ String(scope.row.status) === '0' ? '已禁用' : '正常' }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="操作"
+                    width="160"
+                    align="center"
+                >
+                    <template v-slot="scope">
+                        <el-button
+                            type="text"
+                            size="small"
+                            class="blueBug"
+                            @click="addEmployeeHandle(scope.row.id)"
+                            :class="{notAdmin:user !== 'admin'}"
+                        >
+                            编辑
+                        </el-button>
+                        <el-button
+                            type="text"
+                            size="small"
+                            class="delBut non"
+                            @click="statusHandle(scope.row)"
+                            v-if="user === 'admin'"
+                        >
+                            {{ scope.row.status == '1' ? '禁用' : '启用' }}
+                        </el-button>
+                        <el-button
+                            type="text"
+                            size="small"
+                            class="delBut non"
+                            @click="deleteEmployeeHandle('单删',scope.row.id)"
+                            :class="{notAdmin:user !== 'admin'}"
+                        >
+                            删除
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                class="pageList"
+                :page-sizes="[10,20,30,40]"
+                :page-size="pageSize"
+                layout="total,sizes,prev,pager,next,jumper"
+                :total="counts"
+                :current-page.sync="page"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+            ></el-pagination>
+        </div>
+    </div>
+    <script src="../../plugins/vue/vue.js"></script>
+    <script src="../../plugins/element-ui/index.js"></script>
+    <script src="../../plugins/axios/axios.min.js"></script>
+    <script src="../../js/request.js"></script>
+    <script src="../../api/employee.js"></script>
+</body>
+    <script>
+        new Vue({
+            el:'#employee-app',
+            data(){
+                return{
+                    input:'',
+                    counts:0,
+                    page:1,
+                    pageSize:10,
+                    tableData:[],
+                    id:'',
+                    status:'',
+                    show:false,
+                    DialogVisible:false,
+                    flavorForm:{
+                        workday:[],
+                        worktime:'',
+                        duration:''
+                    }
+                }
+            },
+            computed:{},
+            created(){
+                this.init()
+                this.user = JSON.parse(localStorage.getItem('userInfo')).username
+            },
+            mounted(){},
+            methods: {
+                async init () {
+                    // console.log('run');
+                    const params = {
+                        page: this.page,
+                        pageSize: this.pageSize,
+                        name: this.input ? this.input : undefined
+                    }
+                    await getEmployeeList(params).then(res => {
+                        console.log(res.data);
+                        if (String(res.code) === '1') {
+                            this.tableData = res.data.records || []
+                            this.counts = res.data.total
+                        }
+                    }).catch(err => {
+                        this.$message.error('请求出错了：' + err)
+                    })
+                },
+                handleQuery() {
+                    this.page = 1;
+                    this.init();
+                },
+                handleClose(done){
+                    this.$confirm('确定关闭吗').then(() => {
+                        // function(done)，done 用于关闭 Dialog
+                        done();
+                    }).catch(() => {
+                        console.log("点击确定时触发");
+                    });
+                },
+                //添加
+                addEmployeeHandle(st){
+                    if(st === 'add'){
+                        window.parent.menuHandle({
+                            id:'2',
+                            url:'../page/employee/add.html',
+                            name:'添加员工'
+                        },true)
+                    }else{
+                        window.parent.menuHandle({
+                            id:'2',
+                            url:'../page/employee/add.html?id='+st,
+                            name:'修改员工'
+                        },true)
+                    }
+                },
+                showFlavor(row){
+                    this.id = row.id
+                    getFlavorById(this.id).then(res=>{
+                        this.DialogVisible=true
+                        if(String(res.code) === '1'){
+                            this.flavorForm = {...res.data}
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    })
+
+                },
+                //状态修改
+                statusHandle (row) {
+                    this.id = row.id
+                    this.status = row.status
+                    this.$confirm('确认调整该员工的状态?', '提示', {
+                      'confirmButtonText': '确定',
+                      'cancelButtonText': '取消',
+                      'type': 'warning'
+                      }).then(() => {
+                      enableOrDisableEmployee({ 'id': this.id, 'status': !this.status ? 1 : 0 }).then(res => {
+                        console.log('enableOrDisableEmployee',res)
+                        if (String(res.code) === '1') {
+                          this.$message.success('员工状态更改成功！')
+                          this.handleQuery()
+                        }
+                      }).catch(err => {
+                        this.$message.error('请求出错了：' + err)
+                      })
+                    })
+                },
+                //删除
+                deleteEmployeeHandle(type,id){
+                    if(type === '批量' && id === null){
+                        if(this.checkList.length === 0){
+                            return this.$message.error('请选择删除对象')
+                        }
+                    }
+                    this.$confirm('确认删除该员工，是否继续？','确定删除',{
+                        'confirmButtonText':'确定',
+                        'cancelButtonText':'取消',
+                    }).then(()=>{
+                        deleteEmployee(type === '批量' ? this.checkList.join(',') : id).then(res => {
+                            if(res.code === 1){
+                                this.$message.success('删除成功！')
+                                this.handleQuery()
+                            }else{
+                                this.$message.error(res.msg || '操作失败')
+                            }
+                        }).catch(err => {
+                            this.$message.error('请求出错了:'+err)
+                        })
+                    })
+                },
+                // 全部操作
+                handleSelectionChange (val){
+                  let checkArr = []
+                  val.forEach((n) => {
+                    checkArr.push(n.id)
+                  })
+                  this.checkList = checkArr
+                },
+                handleSizeChange(val){
+                    this.pageSize=val
+                    this.init()
+                },
+                handleCurrentChange(val){
+                    this.page=val
+                    this.init()
+                }
+            },
+        })
+    </script>
+</html>

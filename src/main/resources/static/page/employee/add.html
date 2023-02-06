@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能排班系统</title>
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css">
+    <link rel="stylesheet" href="../../styles/common.css">
+    <link rel="stylesheet" href="../../styles/page.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+</head>
+<body>
+    <div class="addBrand-container" id="employee-add-app">
+        <div class="container">
+            <el-form
+                ref="ruleForm"
+                :model="ruleForm"
+                :rules="rules"
+                :inline="false"
+                label-width="180px"
+                class="demo-ruleForm"
+            >
+                <div>
+                    <el-form-item
+                        label="员工姓名："
+                        prop="name"
+                    >
+                        <el-input 
+                            v-model="ruleForm.name"
+                            placeholder="请输入员工姓名"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="电话："
+                        prop="phone"
+                    >
+                        <el-input 
+                            v-model="ruleForm.phone"
+                            placeholder="请输入手机号"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="电邮："
+                        prop="email"
+                    >
+                        <el-input 
+                            v-model="ruleForm.email"
+                            placeholder="请输入电子邮件地址"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="职位："
+                        prop="job_id"
+                    >
+                        <el-select
+                            v-model="ruleForm.job_id"
+                            placeholder="请选择职位"
+                        >
+                            <el-option v-for="(item,index) in jobList" :key="index" :label="item.name" :value="item.id"></el-option>
+                        </el-select>   
+                    </el-form-item>
+                    <el-form-item
+                        label="工作门店："
+                        prop="store_id"
+                    >
+                        <el-select
+                            v-model="ruleForm.store_id"
+                            placeholder="请选择工作门店"
+                        >
+                            <el-option v-for="(item,index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
+                        </el-select>   
+                    </el-form-item>
+                </div>
+                <!-- 偏好 -->
+<!--                <el-form-item label="偏好选择：">-->
+<!--                    <el-form-item>-->
+<!--                        <div class="flavorBox">-->
+<!--                            <span-->
+<!--                                v-if="flavorList.length == 0"-->
+<!--                                class="addBut"-->
+<!--                                @click="addFlavor"-->
+<!--                            >+设置偏好-->
+<!--                            </span>-->
+<!--                            <div-->
+<!--                                v-if="flavorList.length != 0"-->
+<!--                                class="flavor"-->
+<!--                            >-->
+<!--                                <div class="title">-->
+<!--                                    <span>偏好名称</span><span>偏好标签（输入标签回车添加）</span>-->
+<!--                                </div>-->
+<!--                                <div class="cont">-->
+<!--                                    <div-->
+<!--                                        v-for="(item,index) in flavorList"-->
+<!--                                        :key="index"-->
+<!--                                        class="items"-->
+<!--                                    >-->
+<!--                                        <div class="itTit">-->
+<!--                                            <div class="selectInput">-->
+<!--                                                <div>-->
+<!--                                                    <el-input-->
+<!--                                                        v-model="item.name"-->
+<!--                                                        type="text"-->
+<!--                                                        stle="width:100%"-->
+<!--                                                        @focus="selectFlavor(true,index)"-->
+<!--                                                        @blur="outSelect(false,index)"-->
+<!--                                                        @input="inputHandle(index)"-->
+<!--                                                    ></el-input>-->
+<!--                                                    <div v-show="item.showOption" class="flavorSelect">-->
+<!--                                                        <span-->
+<!--                                                            v-for="(it,ind) in flavorListData"-->
+<!--                                                            :key="ind"-->
+<!--                                                            class="items"-->
+<!--                                                            @click="checkOption(it,ind,index)"-->
+<!--                                                        >{{it.name}}</span>-->
+<!--                                                        <span-->
+<!--                                                            v-if="flavorListData == []"-->
+<!--                                                            class="none"-->
+<!--                                                        >无数据</span>-->
+<!--                                                    </div>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div-->
+<!--                                                class="labItems"-->
+<!--                                                style="display:flex"-->
+<!--                                            >-->
+<!--                                                <span-->
+<!--                                                    v-for="(it,ind) in item.value"-->
+<!--                                                    :key="ind"-->
+<!--                                                >{{it}} <i @click="delFlavorLabel(index,ind)">X</i></span>-->
+<!--                                                <div-->
+<!--                                                    class="inputBox"-->
+<!--                                                    :style="inputStyle"-->
+<!--                                                    contenteditable="true"-->
+<!--                                                    @focus="flavorPosition(index)"-->
+<!--                                                    @keydown.enter="(val)=>keyDownHandle(val,index)"-->
+<!--                                                ></div>-->
+<!--                                            </div>-->
+<!--                                            <span-->
+<!--                                                class="delFlavor delBut non"-->
+<!--                                                @click="delFlavor(index)"-->
+<!--                                            >删除</span>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div-->
+<!--                                        class="addBut"-->
+<!--                                        @click="addFlavor"-->
+<!--                                    >添加偏好</div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </el-form-item>-->
+<!--                </el-form-item>-->
+
+<!--                偏好-->
+                    <el-form-item label="工作日偏好：">
+                        <el-checkbox
+                            class="all_t"
+                            :indeterminate="isIndeterminate"
+                            v-model="checkAll"
+                            @change="handleCheckAllChangeWorkdays"
+                        >全选</el-checkbox>
+                        <el-checkbox-group v-model="ruleForm.checkWorkday" @change="handleCheckColumnChangeWorkdays">
+                            <el-checkbox
+                                    v-for="item in workdayOption"
+                                    :key="item.value"
+                                    :label="item.id"
+                            >{{item.value}}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="工作时间偏好：">
+                        <el-time-select
+                                v-model="ruleForm.startTime"
+                                :picker-options="{start: '07:00',step: '01:00',end: '22:00'}"
+                                placeholder="开始工作时间"
+                        ></el-time-select>
+                        -
+                        <el-time-select
+                                v-model="ruleForm.endTime"
+                                :picker-options="{start: '09:00',step: '01:00',end: '23:00'}"
+                                placeholder="结束工作时间"
+                        ></el-time-select>
+                    </el-form-item>
+                    <el-form-item label="班次时长偏好（小时）：">
+                        <el-radio-group v-model="ruleForm.checkDuration">
+                            <el-radio-button label="2">2小时</el-radio-button>
+                            <el-radio-button label="3">3小时</el-radio-button>
+                            <el-radio-button label="4">4小时</el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+
+                <div class="subBox prefer">
+                    <el-form-item>
+                        <el-button @click="goBack()">
+                            取消
+                        </el-button>
+                        <el-button
+                            type="primary"
+                            @click="submitForm('ruleForm')"
+                        >
+                            保存
+                        </el-button>
+                        <el-button
+                            v-if="actionType == 'add'"
+                            type="primary"
+                            class="continue"
+                            @click="submitForm('ruleForm','goAnd')"
+                        >
+                            保存并继续添加员工
+                        </el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </div>
+    </div>
+    <script src="../../plugins/vue/vue.js"></script>
+    <script src="../../plugins/element-ui/index.js"></script>
+    <script src="../../plugins/axios/axios.min.js"></script>
+    <script src="../../js/request.js"></script>
+    <script src="../../js/validate.js"></script>
+    <script src="../../js/index.js"></script>
+    <script src="../../api/employee.js"></script>
+</body>
+    <script>
+        new Vue({
+            el:'#employee-add-app',
+            data(){
+                return{
+                    id:'',
+                    restKey:0,
+                    textarea:'',
+                    value:'',
+                    actionType:'',
+                    jobList:[],
+                    storeList:[],
+                    workdayOption:[
+                        {id:0,value:'星期日'},
+                        {id:1,value:'星期一'},
+                        {id:2,value:'星期二'},
+                        {id:3,value:'星期三'},
+                        {id:4,value:'星期四'},
+                        {id:5,value:'星期五'},
+                        {id:6,value:'星期六'},
+                    ],
+                    isIndeterminate:true,
+                    checkAll:false,
+                    vueRest:'1',
+                    index:0,
+                    inputStyle:{'flex':1},
+                    ruleForm:{
+                        'name':'',
+                        'phone':'',
+                        'email':'',
+                        'status':true,
+                        job_id:'',
+                        store_id:'',
+                        checkWorkday:[],
+                        checkDuration:'',
+                        startTime:'',
+                        endTime:'',
+                    },
+                    mak:false
+                }
+            },
+            computed:{
+                rules(){
+                    return{
+                        'name':[
+                            {'required':true,'message':'请填写员工名称','trigger':'blur'}
+                        ],
+                        'phone':[
+                            {'required':true,'message':'请填写员工手机号','trigger':'blur'}
+                        ],
+                        'job_id':[
+                            {'required':true,'message':'请选择职位','trigger':'change'}
+                        ],
+                        'store_id':[
+                            {'required':true,'message':'请选择所属门店','trigger':'blur'}
+                        ],
+                    }
+                }
+            },
+            created(){
+                this.id=requestUrlParam('id')
+                this.getJobsList()
+                this.getStoresList()
+                this.names=this.workdayOption
+                this.actionType=this.id ? 'edit' : 'add'
+                if(this.id){
+                    this.init();
+                }
+            },
+            mounted(){
+            },
+            methods: {
+                async init(){
+                    queryEmployeeById(this.id).then(res => {
+                        console.log(res)
+                        if(String(res.code) === '1'){
+                            this.ruleForm = {...res.data}
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    })
+                },
+
+                //获取职位
+                getJobsList(){
+                    getJobList().then(res => {
+                        if(res.code === 1){
+                            this.jobList=res.data
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    })
+                },
+                //获取门店
+                getStoresList(){
+                    getStoreList().then(res => {
+                        if(res.code === 1){
+                            this.storeList=res.data
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    })
+                },
+
+                handleCheckAllChangeWorkdays(val) {
+                    var checkedsItem = val ? this.workdayOption : []
+                    if (checkedsItem.length > 0) {
+                        checkedsItem.map(item => {
+                            this.ruleForm.checkWorkday.push(item.id)
+                        })
+                    } else {
+                        this.ruleForm.checkWorkday = []
+                    }
+                    this.isIndeterminate = false
+                },
+                handleCheckColumnChangeWorkdays(value) {
+                    let checkedCount = value.length
+                    this.checkAll = checkedCount === this.names.length
+                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.names.length
+                },
+
+                inputHandle(val,index){},
+                submitForm(formName,st){
+                    this.$refs[formName].validate((valid)=>{
+                        if(valid){
+                            let params = {...this.ruleForm}
+                            params.status = this.ruleForm ? 1:0
+                            params.job_id=this.ruleForm.job_id
+                            params.store_id=this.ruleForm.store_id
+                            params.checkDuration=this.ruleForm.checkDuration
+                            params.startTime=this.ruleForm.startTime
+                            params.endTime=this.ruleForm.endTime
+                            console.log(params)
+                            if(this.actionType == 'add'){
+                                delete params.id
+                                addEmployee(params).then(res=>{
+                                    if(res.code === 1){
+                                        this.$message.success('员工添加成功！')
+                                        if(!st){
+                                            this.goBack()
+                                        }else{
+                                            this.checkWorkday=[]
+                                            this.ruleForm={
+                                                'name':'',
+                                                'phone':'',
+                                                'email':'',
+                                                'status':true,
+                                                job_id:'',
+                                                store_id:'',
+                                                checkWorkday:[],
+                                                checkDuration:'',
+                                                startTime:'',
+                                                endTime:'',
+                                            }
+                                        }
+                                    }else{
+                                        this.$message.error(res.msg || '操作失败')
+                                    }
+                                }).catch(err=>{
+                                    this.$message.error('请求出错了：'+err)
+                                })
+                            }else{
+                                delete params.updateTime
+                                editEmployee(params).then(res=>{
+                                    if(res.code == 1){
+                                        this.$message.success('员工信息修改成功！')
+                                        this.goBack()
+                                    }else{
+                                        this.$message.error(res.msg || '操作失败')
+                                    }
+                                }).catch(err=>{
+                                    this.$message.error('请求出错了：'+err)
+                                })
+                            }
+                        }else{
+                            return false
+                        }
+                    })
+                },
+                handleAvatarSuccess (response, file, fileList) {
+                    // 拼接down接口预览
+                    if(response.code === 0 && response.msg === '未登录'){
+                      window.top.location.href = '../../page/login.html'
+                    }else{
+                    //   this.imageUrl = `/common/download?name=${response.data}`
+                       this.ruleForm.image = response.data
+                    }
+                },
+                goBack(){
+                    window.parent.menuHandle({
+                        id:'2',
+                        url:'../../page/employee/list.html',
+                        name:'员工管理'
+                    },false)
+                }
+            },
+        });
+    </script>
+</html>
