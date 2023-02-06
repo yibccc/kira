@@ -10,6 +10,6 @@ import com.kira.domain.Employee;
  */
 public interface IEmployeeService extends IService<Employee> {
 //    IPage<Employee> getPage(int currentPage,int pageSize);
-    //新增员工，同时插入偏好数据
+    //新增员工，同时插入偏好数据;
 //    public void saveWithPreference();
 }
