@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能排班系统</title>
+    <link rel="stylesheet" href="../../styles/common.css">
+    <link rel="stylesheet" href="../../styles/page.css">
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css">
+    <link rel="stylesheet" href="../../styles/schedule.css">
+    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" id="schedule-app">
+        <div class="container">
+            <div class="tableBar">
+                <div class="storedropdown">
+                    <el-select class="dropdown"  type="primary" v-model="selectedStoreId" filterable placeholder="请选择门店" clearable="" @change="storeChange">
+                        <el-option v-for="item in storeList" :key="item.id" :label="item.name" :value="item.id"></el-option>  
+                    </el-select>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <script src="../../plugins/vue/vue.js"></script>
+    <script src="../../plugins/element-ui/index.js"></script>
+    <script src="../../plugins/axios/axios.min.js"></script>
+    <script src="../../js/request.js"></script>
+    <script src="../../api/schedule.js"></script>
+</body>
+    <script>
+        new Vue({
+            el:'#schedule-app',
+            data(){
+                return{
+                    selectedStoreId:[],
+                    storeList:[],
+                }
+            },
+            computed:{},
+            created(){
+                this.init()
+                this.user = JSON.parse(localStorage.getItem('userInfo')).username
+            },
+            mounted(){},
+            methods: {
+                async init () {
+                    const params = {
+                        page: this.page,
+                        pageSize: this.pageSize,
+                        name: this.input ? this.input : undefined
+                    }
+                    await getStoreList(params).then(res => {
+                        console.log(res.data);
+                        if (String(res.code) === '1') {
+                            this.storeList = res.data.records || []
+                            this.selectedStoreId = res.data.id
+                        }
+                    }).catch(err => {
+                        this.$message.error('请求出错了：' + err)
+                    })
+                },
+                storeChange(){
+                    console.log("选中门店id:",this.selectedStoreId);
+                }
+            },
+                
+        })
+    </script>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能排班系统注册</title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../plugins/element-ui/index.css">
+    <link rel="stylesheet" href="../styles/common.css">
+    <link rel="stylesheet" href="../styles/page.css">
+    <link rel="stylesheet" href="../styles/register.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+</head>
+
+<body>
+    <div class="register" id="register">
+        <div class="register-box">
+            <div class="left">
+                <div class="logo">
+                    智能排班系统
+                </div>
+                <div class="introduction">智能排班系统旨在简化员工排班管理和能够顺利地管理多个员工名册<br><br>这是一款灵活、强大的，并且可根据您的需求定制的员工排班管理系统。定义排班、添加员工和自动排班——通过此智能排班系统一处就可完成。</div>
+            </div>
+            <div class="right">
+                <span class="login" @click="loginHandle">已有账号，立即登录</span>
+                <h1>注册智能排班系统，开始全功能免费试用！</h1>
+                <div class="form">
+                    <el-form ref="registerForm" :model="registerForm" :rules="registerRules">
+                        <el-form-item prop="username" label="账号">
+                            <el-input v-model="registerForm.username" type="text" auto-complete="off" placeholder="请输入1-20位账号" maxlength="20" />
+                        </el-form-item>
+                        <el-form-item prop="password" label="密码">
+                            <el-input v-model="registerForm.password" type="password" placeholder="请输入6-16位密码" maxlength="16"/>
+                        </el-form-item>
+                        <el-form-item prop="confirmPassword" label="确认密码">
+                            <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认密码必须与密码一致" maxlength="16"/>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <img src="../images/blue.png" alt="">
+                <div class="subBox">
+                    <el-button @click="goBack()">
+                        取消
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="submitForm('registerForm')"
+                    >
+                        提交
+                    </el-button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../plugins/vue/vue.js"></script>
+    <script src="../plugins/element-ui/index.js"></script>
+    <script src="../plugins/axios/axios.min.js"></script>
+    <script src="../js/request.js"></script>
+    <script src="../js/validate.js"></script>
+    <script src="../api/register.js"></script>
+</body>
+    <script>
+        new Vue({
+            el:'#register',
+            data(){
+                return{
+                    registerForm:{
+                        username:'',
+                        password:'',
+                        confirmPassword:''
+                    },
+                }
+            },
+            computed:{
+                registerRules(){
+                    const validateUsername = (rule, value, callback) => {
+                        if (value.length < 1 || value.length > 20) {
+                          callback(new Error('请输入正确的用户名'))
+                        } else {
+                          callback()
+                        }
+                    }
+                    const validatePassword = (rule, value, callback) => {
+                        if (value.length < 6 || value.length >16) {
+                          callback(new Error('密码长度必须在6-16位'))
+                        }else{
+                            if(this.registerForm.confirmPassword !== ''){
+                                this.$refs.registerForm.validateField('confirmPassword')
+                            }
+                            callback()
+                        }
+                    } 
+                    const validateConfirmPassword = (rule,value,callback)=>{
+                        if(value.length < 1){
+                            callback(new Error('重复密码不能为空！'));
+                        }else if(value != this.registerForm.password){
+                            callback(new Error('两次输入密码不一致！'));
+                        }else{
+                            callback()
+                        }
+                    }
+                    return {
+                        username: [{ validator: validateUsername, trigger: 'blur' }],
+                        password: [{ validator: validatePassword, trigger: 'blur' }],
+                        confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
+                    }
+                }
+            },
+            created(){},
+            methods: {
+                async submitForm(formName,st){
+                    this.$refs[formName].validate((valid)=>{
+                        if(valid){
+                            let params = {...this.registerForm}
+                            params.username=this.registerForm.username
+                            params.password=this.registerForm.password
+                            delete params.updateTime
+                            addUser(params).then(res=>{
+                                if(res.code == 1){
+                                    this.$message.success('注册成功！')
+                                    alert('注册成功，你将返回登录界面')
+                                    this.goBack()
+                                }else{
+                                    this.$message.error(res.msg || '注册失败')
+                                    alert('注册失败')
+                                }
+                            }).catch(err=>{
+                                this.$message.error('请求出错了：'+err)
+                            })
+                        }
+                    })
+                },
+                loginHandle(){
+                    window.location.href='./login.html'
+                },
+                goBack(){
+                    window.location.href='./login.html'
+                }
+            },
+        })
+    </script>
+</html>
