@@ -18,10 +18,10 @@ public class EmployeeServiceImpl extends ServiceImpl<EmployeeDao, Employee> impl
     @Autowired
     private EmployeeDao employeeDao;
 
-    @Override
-    public IPage<Employee> getPage(int currentPage, int pageSize) {
-        IPage page = new Page(currentPage,pageSize);
-        employeeDao.selectPage(page,null);
-        return page;
-    }
+//    @Override
+//    public IPage<Employee> getPage(int currentPage, int pageSize) {
+//        IPage page = new Page(currentPage,pageSize);
+//        employeeDao.selectPage(page,null);
+//        return page;
+//    }
 }
