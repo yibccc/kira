@@ -1,0 +1,69 @@
+body{
+    min-width: 1336px;
+}
+.left{
+    position: absolute;
+    height: 100%;
+    width: 300px;
+    text-align: center;
+    background-color: #2b3c5a;
+}
+.logo{
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin-top:20px;
+}
+.introduction{
+    color:rgb(160, 170, 196);
+    font-size:18px;
+    text-align: center;
+    margin:120px 15px 15px;
+    line-height: 30px;
+}
+.right{
+    position: absolute;
+    left:300px;
+    width: 1306px;
+}
+h1{
+    display:block;
+    margin: 50px 100px 50px;
+    font-size: 24px;
+}
+.login{
+    position: absolute;
+    right:20px;
+    top:25px;
+    color:#155fe7;
+}
+.login:hover{
+    cursor: pointer;
+}
+.form{
+    float: left;
+    margin-left:100px;
+    width: 400px;
+    height: 350px;
+}
+img{
+    float: left;
+    width: 450px;
+    height: 450px;
+    margin-left: 200px;
+    opacity:0.8;
+}
+.el-form-item__label{
+    color:#333;
+    font-size:16px;
+    font-weight: 700;
+}
+.el-input__inner{
+    color:#333;
+}
+.subBox{
+    position: absolute;
+    top:500px;
+    margin-left: 350px;
+}

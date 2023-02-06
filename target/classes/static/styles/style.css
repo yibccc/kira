@@ -1,0 +1,204 @@
+/* 把所有内外标签清零 */        
+* {
+    margin: 0;
+    padding: 0
+}
+
+/* em和i斜体文字不倾斜 */        
+em,
+i {
+    font-style: normal
+}
+
+/* 去掉li的小圆点 */        
+li {
+    list-style: none
+}
+
+img {
+    /* border:0照顾低版本浏览器。如果，图片外面包含了链接会有边框的问题 */
+    border: 0;
+    /* 取消底部图片侧有空白缝隙的问题 */
+    vertical-align: middle
+}
+
+button {
+    /* 经过button的鼠标变成小手 */
+    cursor: pointer
+}
+
+/* a {
+    color: #666;
+    text-decoration: none
+}
+
+a:hover {
+    color: #c81623
+} */
+a,
+a:focus,
+a:hover {
+  color: inherit;
+  outline: none;
+  text-decoration: none;
+}
+
+button,
+input {
+    font-family: Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\5B8B\4F53", sans-serif
+}
+
+/* body { */
+    /* CSS3抗锯齿性：让文字显示的更加清晰 */
+    /* -webkit-font-smoothing: antialiased;
+    background-color: #fff;
+    font: 12px/1.5 Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\5B8B\4F53", sans-serif;
+    color: #666;
+    height: 100%;
+    margin:0;
+}  */
+
+body {
+    height: 100%;
+    /* min-width: 1176px; */
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue,
+      Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+    margin: 0;
+  }
+
+.hide,
+.none {
+    display: none
+}
+
+/* 清除浮动 */        
+.clearfix:after {
+    visibility: hidden;
+    clear: both;
+    display: block;
+    content: ".";
+    height: 0
+}
+
+.clearfix {
+    *zoom: 1
+}
+
+html{
+    height: 100%;
+}
+
+#app{
+    height: 100%;
+}
+
+*,
+*:before,
+*:after{
+    box-sizing: border-box;
+}
+
+.blueBug{
+    color:#419eff !important;
+    position: relative;
+}
+.blueBug::after {
+    content: "";
+    position: absolute;
+    right: -6px;
+    height: 14px;
+    width: 0px;
+    border-right: solid 1px #ebeef5 !important;
+}
+.delBut {
+    color: #f56c6c !important;
+    position: relative;
+}
+.delBut::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  height: 14px;
+  width: 0px;
+  border-right: solid 1px #ebeef5 !important;
+}
+.non::after {
+  display: none;
+}
+div:focus {
+  outline: none;
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.app-container {
+  padding: 20px;
+}
+.continue {
+  border-color: #333333 !important;
+  background: #333333 !important;
+  color: #ffffff !important;
+}
+.continue:hover {
+  background-color: #999999 !important;
+  border-color: #999999 !important;
+  color: #ffffff !important;
+}
+.continue:active {
+  background-color: #2a2a2a !important;
+  border-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+.el-pagination--small .arrow.disabled,
+.el-table .hidden-columns,
+.el-table td.is-hidden > *,
+.el-table th.is-hidden > *,
+.el-table--hidden {
+  visibility: hidden;
+}
+.el-dropdown .el-dropdown-selfdefine:focus:active,
+.el-dropdown .el-dropdown-selfdefine:focus:not(.focusing),
+.el-message__closeBtn:focus,
+.el-message__content:focus,
+.el-popover:focus,
+.el-popover:focus:active,
+.el-popover__reference:focus:hover,
+.el-popover__reference:focus:not(.focusing),
+.el-rate:active,
+.el-rate:focus,
+.el-tooltip:focus:hover,
+.el-tooltip:focus:not(.focusing),
+.el-upload-list__item.is-success:active,
+.el-upload-list__item.is-success:not(.focusing):focus {
+  outline-width: 0;
+}
+.el-input__suffix,
+.el-tree.is-dragging .el-tree-node__content * {
+  pointer-events: none;
+}
+[class*=" el-icon-"],
+[class^="el-icon-"] {
+  font-family: element-icons !important;
+  speak: none;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: baseline;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

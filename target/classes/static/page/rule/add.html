@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能排班系统</title>
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css">
+    <link rel="stylesheet" href="../../styles/common.css">
+    <link rel="stylesheet" href="../../styles/page.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+    <style>
+        .tip{
+            text-align: center;
+            color: #2b3c5a;
+            font-size: larger;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="addBrand-container" id="rule-add-app">
+        <div class="container">
+            <el-form
+                ref="ruleForm"
+                :model="ruleForm"
+                :rules="rules"
+                :inline="false"
+                label-width="400px"
+                class="demo-ruleForm"
+            >
+                <div>
+                    <el-form-item
+                        label="规则名称："
+                        prop="name"
+                    >
+                        <el-input 
+                            v-model="ruleForm.name"
+                            placeholder="请输入规则名称"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+                    <div class="tip">开店前</div>
+                    <el-form-item
+                        label="Ⅰ 开店前准备工作时间/h："
+                        prop="pretime"
+                    >
+                        <el-input 
+                            v-model="ruleForm.pretime"
+                            placeholder="请输入开店前准备工作的时间"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Ⅰ.Ⅰ 固定值（eg:人数=门店面积/100）："
+                        prop="prenum"
+                    >
+                        <el-input 
+                            v-model="ruleForm.prenum"
+                            placeholder="请输入一个数用于计算准备工作所需人数"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Ⅰ.Ⅱ 可执行准备工作的职位："
+                    >
+                        <el-checkbox  
+                            class="all_t"
+                            :indeterminate="isIndeterminate"
+                            v-model="checkAll"
+                            @change="handleCheckAllChangeJobs"
+                        >全选</el-checkbox>
+                        <el-checkbox-group
+                            v-model="checkeds"
+                            @change="handleCheckedColumnChangeJobs"
+                        >
+                            <el-checkbox
+                                v-for="(item) in jobList"
+                                :label="item.name"
+                                :key="item.name"
+                            >{{ item.name }}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <div class="tip">营业中</div>
+                    <el-form-item
+                        label="Ⅱ 固定值（eg:人数=预测客流/3.8）："
+                        prop="innum"
+                    >
+                        <el-input 
+                            v-model="ruleForm.innum"
+                            placeholder="请输入一个数用于计算开店营业所需人数"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Ⅱ.Ⅰ 可执行开店营业的职位："
+                    >
+                        <el-checkbox  
+                            class="all_t"
+                            :indeterminate="isIndeterminate"
+                            v-model="checkAll"
+                            @change="handleCheckAllChangeJobs"
+                        >全选</el-checkbox>
+                        <el-checkbox-group
+                            v-model="checkeds"
+                            @change="handleCheckedColumnChangeJobs"
+                        >
+                            <el-checkbox
+                                v-for="(item) in jobList"
+                                :label="item.name"
+                                :key="item.name"
+                            >{{ item.name }}</el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <div class="tip">关店后</div>
+                    <el-form-item
+                        label="Ⅲ 关店后收尾工作时间/h："
+                        prop="endtime"
+                    >
+                        <el-input 
+                            v-model="ruleForm.endtime"
+                            placeholder="请输入关闭后收尾工作的时间"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Ⅲ.Ⅰ 固定值（eg:人数=门店面积/80）："
+                        prop="endnum"
+                    >
+                        <el-input 
+                            v-model="ruleForm.endnum"
+                            placeholder="请输入一个数用于计算收尾工作所需人数"
+                            maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Ⅲ.Ⅱ 可执行收尾工作的职位："
+                    >
+                        <el-checkbox  
+                            class="all_t"
+                            :indeterminate="isIndeterminate"
+                            v-model="checkAll"
+                            @change="handleCheckAllChangeJobs"
+                        >全选</el-checkbox>
+                        <el-checkbox-group
+                            v-model="checkeds"
+                            @change="handleCheckedColumnChangeJobs"
+                        >
+                            <el-checkbox-bottom
+                                v-for="(item) in jobList"
+                                :label="item.name"
+                                :key="item.name"
+                            >{{ item.name }}</el-checkbox-bottom>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    
+                </div>
+                <div class="subBox prefer">
+                    <el-form-item>
+                        <el-button @click="goBack()">
+                            取消
+                        </el-button>
+                        <el-button
+                            type="primary"
+                            @click="submitForm('ruleForm')"
+                        >
+                            保存
+                        </el-button>
+                        <el-button
+                            v-if="actionType == 'add'"
+                            type="primary"
+                            class="continue"
+                            @click="submitForm('ruleForm','goAnd')"
+                        >
+                            保存并继续添加规则
+                        </el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+        </div>
+    </div>
+    <script src="../../plugins/vue/vue.js"></script>
+    <script src="../../plugins/element-ui/index.js"></script>
+    <script src="../../plugins/axios/axios.min.js"></script>
+    <script src="../../js/request.js"></script>
+    <script src="../../js/validate.js"></script>
+    <script src="../../js/index.js"></script>
+    <script src="../../api/rule.js"></script>
+</body>
+    <script>
+        new Vue({
+            el:'#rule-add-app',
+            data(){
+                return{
+                    id:'',
+                    restKey:0,
+                    textarea:'',
+                    value:'',
+                    actionType:'',
+                    vueRest:'1',
+                    ruleList:[],
+                    index:0,
+                    inputStyle:{'flex':1},
+                    ruleForm:{
+                        'name':'',
+                        'pretime':'',
+                        'prenum':'',
+                        'innum':'',
+                        'endtime':'',
+                        'endnum':'',
+                        'code':''
+                    },
+                    mak:false,
+                    isIndeterminate:true,
+                    checkAll:false,
+                    checkeds:[],
+                    jobList:[]
+                }
+            },
+            computed:{
+                rules(){
+                    return{
+                        'name':[
+                            {'required':true,'message':'请填写规则名称','trigger':'blur'}
+                        ],
+                    }
+                }
+            },
+            created(){
+                this.getRulesList()
+                this.getJobsList()
+                this.names = this.jobList
+                this.id=requestUrlParam('id')
+                this.actionType=this.id ? 'edit' : 'add'
+                if(this.id){
+                    this.init();
+                }
+            },
+            mounted(){},
+            methods: {
+                async init(){
+                    queryRuleById(this.id).then(res => {
+                        console.log(res)
+                        if(String(res.code) === '1'){
+                            this.ruleForm = {...res.data}
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    })
+                },
+                //获取规则
+                getRulesList(){
+                    getRuleList({'type':1}.then(res => {
+                        if(res.code === 1){
+                            this.ruleList=res.data
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    }))
+                },
+
+                getJobsList(){
+                    getJobList({'type':1}.then(res=>{
+                        if(res.code === 1){
+                            this.jobList=res.data
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    }))
+                },
+
+                inputHandle(val,index){},
+                submitForm(formName,st){
+                    this.$refs[formName].validate((valid)=>{
+                        if(valid){
+                            let params = {...this.ruleForm}
+                            params.ruleId=this.ruleForm.ruleId
+                            if(this.actionType == 'add'){
+                                delete params.id
+                                addRule(params).then(res=>{
+                                    if(res.code === 1){
+                                        this.$message.success('规则添加成功！')
+                                        if(!st){
+                                            this.goBack()
+                                        }else{
+                                            this.ruleForm={
+                                                'name':'',
+                                                'pretime':'',
+                                                'prenum':'',
+                                                'intime':'',
+                                                'innum':'',
+                                                'endtime':'',
+                                                'endnum':'',
+                                            }
+                                        }
+                                    }else{
+                                        this.$message.error(res.msg || '操作失败')
+                                    }
+                                }).catch(err=>{
+                                    this.$message.error('请求出错了：'+err)
+                                })
+                            }else{
+                                delete params.updateTime
+                                editRule(params).then(res=>{
+                                    if(res.code == 1){
+                                        this.$message.success('规则信息修改成功！')
+                                        this.goBack()
+                                    }else{
+                                        this.$message.error(res.msg || '操作失败')
+                                    }
+                                }).catch(err=>{
+                                    this.$message.error('请求出错了：'+err)
+                                })
+                            }
+                        }else{
+                            return false
+                        }
+                    })
+                },
+                handleAvatarSuccess (response, file, fileList) {
+                    // 拼接down接口预览
+                    if(response.code === 0 && response.msg === '未登录'){
+                      window.top.location.href = '../../page/login.html'
+                    }else{
+                    //   this.imageUrl = `/common/download?name=${response.data}`
+                       this.ruleForm.image = response.data
+                    }
+                },
+                handleCheckAllChangeJobs(val) {
+                    var checkedsItem = val ? this.jobList : []
+                    if (checkedsItem.length > 0) {
+                      checkedsItem.map(item => {
+                        this.checkeds.push(item.name)
+                      })
+                    } else {
+                      this.checkeds = []
+                    }
+                    this.isIndeterminate = false
+                },
+                handleCheckedColumnChangeJobs(value) {
+                    let checkedCount = value.length
+                    this.checkAll = checkedCount === this.names.length
+                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.names.length
+                },
+                goBack(){
+                    window.parent.menuHandle({
+                        id:'5',
+                        url:'../../page/rule/list.html',
+                        name:'规则管理'
+                    },false)
+                }
+            },
+        });
+    </script>
+</html>
