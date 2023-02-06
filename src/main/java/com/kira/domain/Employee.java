@@ -15,4 +15,11 @@ public class Employee {
     private String store_id;
     private String phone;
     private Integer status;
+    private Integer checkDuration;
+
+    private String startTime;
+
+    private String endTime;
+
+    private String checkWorkday;
 }

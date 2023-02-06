@@ -7,6 +7,7 @@ import com.kira.controller.utils.R;
 import com.kira.domain.Employee;
 import com.kira.domain.Store;
 import com.kira.domain.User;
+import com.kira.dto.EmployeeDto;
 import com.kira.service.IEmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,4 +72,6 @@ public class EmployeeController {
         Employee employee  = employeeService.getById(id);
         return R.success(employee);
     }
+
+
 }
