@@ -277,8 +277,9 @@
                             params.jobId=this.ruleForm.jobId
                             params.storeId=this.ruleForm.storeId
                             params.checkDuration=this.ruleForm.checkDuration
-                            params.startTime=JSON.stringify(this.ruleForm.startTime)
-                            params.endTime=JSON.stringify(this.ruleForm.endTime)
+                            params.checkWorkday=this.ruleForm.checkWorkday.join()
+                            params.startTime=this.ruleForm.startTime
+                            params.endTime=this.ruleForm.endTime
                             console.log(params)
                             if(this.actionType == 'add'){
                                 delete params.id
@@ -288,7 +289,7 @@
                                         if(!st){
                                             this.goBack()
                                         }else{
-                                            this.checkWorkday=[]
+                                            this.checkWorkday=[].toString()
                                             this.ruleForm={
                                                 'name':'',
                                                 'phone':'',
