@@ -35,9 +35,9 @@
                     ></i>
                 </el-input>
                 <div class="tableLab">
-                    <span class="span-btn delBut non" @click="deleteHandle('批量', null)">批量删除</span>
-                    <span class="span-btn blueBug non" @click="statusHandle('1')">批量启用</span>
-                    <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')">批量停用</span>
+                    <span class="span-btn delBut non" @click="deleteHandle('批量', null)" :disabled="this.checkList.length === 0">批量删除</span>
+                    <span class="span-btn blueBug non" @click="statusHandle('1')" :disabled="this.checkList.length === 0">批量启用</span>
+                    <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')" :disabled="this.checkList.length === 0">批量停用</span>
                     <el-button
                         type="primary"
                         @click="addEmployeeHandle('add')"
@@ -54,32 +54,39 @@
             >
                 <el-table-column
                     type="selection"
-                    width="25"
+                    width="40"
+                    align="center"
                 ></el-table-column>
                 <el-table-column
                     prop="name"
                     label="姓名"
+                    align="center"
                 ></el-table-column>
                 <el-table-column
-                    prop="jobId"
+                    prop="jobName"
                     label="职位"
+                    align="center"
                 ></el-table-column>
                 <el-table-column
                     prop="phone"
                     label="电话"
+                    align="center"
                 ></el-table-column>
                 <el-table-column
                     prop="email"
                     label="电邮"
+                    width="155"
+                    align="center"
                 ></el-table-column>
                 <el-table-column
-                    prop="storeId"
+                    prop="storeName"
                     label="工作门店"
+                    align="center"
                 ></el-table-column>
 
                 <el-table-column
                         label="偏好"
-                        width="160"
+                        width="140"
                         align="center"
                 >
                     <template v-slot="scope">
@@ -107,7 +114,10 @@
                     </el-form>
                 </el-dialog>
 
-                <el-table-column label="账号状态">
+                <el-table-column
+                        label="账号状态"
+                        align="center"
+                >
                     <template v-slot="scope">
                       {{ String(scope.row.status) === '0' ? '已禁用' : '正常' }}
                     </template>
@@ -176,6 +186,7 @@
                     page:1,
                     pageSize:10,
                     tableData:[],
+                    checkList:[],
                     id:'',
                     status:'',
                     show:false,
