@@ -18,8 +18,8 @@ public class Employee {
     private Integer id;
     private String name;
     private String email;
-    private String jobId;
-    private String storeId;
+    private Integer jobId;
+    private Integer storeId;
     private String phone;
     private Integer status;
     private Integer checkDuration;

@@ -70,6 +70,7 @@ public class StoreController {
         return R.success("修改成功！");
     }
 
+    //回显
     @GetMapping("/{id}")
     public R<Store> getById(@PathVariable Integer id){
         Store store = storeService.getById(id);

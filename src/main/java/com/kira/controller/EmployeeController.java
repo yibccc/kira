@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kira.controller.utils.R;
 import com.kira.domain.Employee;
+import com.kira.domain.Job;
 import com.kira.domain.Store;
 import com.kira.domain.User;
 import com.kira.dto.EmployeeDto;
 import com.kira.service.IEmployeeService;
+import com.kira.service.IJobService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author shkstart
@@ -29,19 +33,43 @@ public class EmployeeController {
     @Autowired
     private IEmployeeService employeeService;
 
+    @Autowired
+    private IJobService jobService;
+
     //分页查询
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
         //分页构造器
-        Page pageInfo = new Page(page,pageSize);
+        Page<Employee> pageInfo = new Page(page,pageSize);
+        Page<EmployeeDto> employeeDtoPage = new Page<>();
         //条件构造器
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper();
         //过滤条件
         queryWrapper.like(StringUtils.hasText(name),Employee::getName, name);
         //查询操作
         employeeService.page(pageInfo, queryWrapper);
-        return R.success(pageInfo);
+
+        BeanUtils.copyProperties(pageInfo,employeeDtoPage,"records");
+
+        List<Employee> records = pageInfo.getRecords();
+
+        List<EmployeeDto> list = records.stream().map((item)->{
+            EmployeeDto employeeDto =new EmployeeDto();
+
+            BeanUtils.copyProperties(item,employeeDto);
+
+            Integer jobId = item.getJobId();
+
+            Job job = jobService.getById(jobId);
+            String jobName = job.getName();
+            employeeDto.setJobName(jobName);
+
+            return employeeDto;
+                }).collect(Collectors.toList());
+        employeeDtoPage.setRecords(list);
+
+        return R.success(employeeDtoPage);
     }
 
     //根据id修改
