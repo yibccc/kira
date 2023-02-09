@@ -11,6 +11,7 @@ import com.kira.domain.User;
 import com.kira.dto.EmployeeDto;
 import com.kira.service.IEmployeeService;
 import com.kira.service.IJobService;
+import com.kira.service.IStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class EmployeeController {
     @Autowired
     private IJobService jobService;
 
+    @Autowired
+    private IStoreService storeService;
+
     //分页查询
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name){
@@ -60,10 +64,15 @@ public class EmployeeController {
             BeanUtils.copyProperties(item,employeeDto);
 
             Integer jobId = item.getJobId();
+            Integer storeId = item.getStoreId();
 
             Job job = jobService.getById(jobId);
             String jobName = job.getName();
             employeeDto.setJobName(jobName);
+
+            Store store = storeService.getById(storeId);
+            String storeName = store.getName();
+            employeeDto.setStoreName(storeName);
 
             return employeeDto;
                 }).collect(Collectors.toList());
