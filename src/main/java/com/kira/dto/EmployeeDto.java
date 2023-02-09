@@ -1,10 +1,8 @@
 package com.kira.dto;
 
 import com.kira.domain.Employee;
-import com.kira.domain.Preference;
 import lombok.Data;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +12,11 @@ import java.util.List;
  */
 @Data
 public class EmployeeDto extends Employee {
-    private List<Preference> preferences = new ArrayList<>();
+//    private List<Employee> employees = new ArrayList<>();
+
+    private String jobName;
+
+    private String StoreName;
 
 
 }

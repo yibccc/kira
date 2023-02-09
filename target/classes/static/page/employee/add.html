@@ -57,10 +57,10 @@
 
                     <el-form-item
                         label="职位："
-                        prop="job_id"
+                        prop="jobId"
                     >
                         <el-select
-                            v-model="ruleForm.job_id"
+                            v-model="ruleForm.jobId"
                             placeholder="请选择职位"
                         >
                             <el-option v-for="(item,index) in jobList" :key="index" :label="item.name" :value="item.id"></el-option>
@@ -68,10 +68,10 @@
                     </el-form-item>
                     <el-form-item
                         label="工作门店："
-                        prop="store_id"
+                        prop="storeId"
                     >
                         <el-select
-                            v-model="ruleForm.store_id"
+                            v-model="ruleForm.storeId"
                             placeholder="请选择工作门店"
                         >
                             <el-option v-for="(item,index) in storeList" :key="index" :label="item.name" :value="item.id"></el-option>
@@ -178,8 +178,8 @@
                         'phone':'',
                         'email':'',
                         'status':true,
-                        job_id:'',
-                        store_id:'',
+                        jobId:'',
+                        storeId:'',
                         checkWorkday:[],
                         checkDuration:'',
                         startTime:'',
@@ -197,10 +197,10 @@
                         'phone':[
                             {'required':true,'message':'请填写员工手机号','trigger':'blur'}
                         ],
-                        'job_id':[
+                        'jobId':[
                             {'required':true,'message':'请选择职位','trigger':'change'}
                         ],
-                        'store_id':[
+                        'storeId':[
                             {'required':true,'message':'请选择所属门店','trigger':'blur'}
                         ],
                     }
@@ -274,9 +274,10 @@
                         if(valid){
                             let params = {...this.ruleForm}
                             params.status = this.ruleForm ? 1:0
-                            params.job_id=this.ruleForm.job_id
-                            params.store_id=this.ruleForm.store_id
+                            params.jobId=this.ruleForm.jobId
+                            params.storeId=this.ruleForm.storeId
                             params.checkDuration=this.ruleForm.checkDuration
+                            params.checkWorkday=this.ruleForm.checkWorkday.join()
                             params.startTime=this.ruleForm.startTime
                             params.endTime=this.ruleForm.endTime
                             console.log(params)
@@ -288,14 +289,14 @@
                                         if(!st){
                                             this.goBack()
                                         }else{
-                                            this.checkWorkday=[]
+                                            this.checkWorkday=[].toString()
                                             this.ruleForm={
                                                 'name':'',
                                                 'phone':'',
                                                 'email':'',
                                                 'status':true,
-                                                job_id:'',
-                                                store_id:'',
+                                                jobId:'',
+                                                storeId:'',
                                                 checkWorkday:[],
                                                 checkDuration:'',
                                                 startTime:'',
