@@ -86,10 +86,10 @@
                             v-model="checkAll"
                             @change="handleCheckAllChangeWorkdays"
                         >全选</el-checkbox>
-                        <el-checkbox-group v-model="ruleForm.checkWorkday" @change="handleCheckColumnChangeWorkdays">
+                        <el-checkbox-group v-model="checkedWorkday" @change="handleCheckColumnChangeWorkdays">
                             <el-checkbox
                                     v-for="item in workdayOption"
-                                    :key="item.value"
+                                    :key="item.id"
                                     :label="item.id"
                             >{{item.value}}</el-checkbox>
                         </el-checkbox-group>
@@ -185,6 +185,7 @@
                         startTime:'',
                         endTime:'',
                     },
+                    checkedWorkday:[],
                     mak:false
                 }
             },
@@ -224,6 +225,9 @@
                         console.log(res)
                         if(String(res.code) === '1'){
                             this.ruleForm = {...res.data}
+                            let strCheckWorkday =this.ruleForm.checkWorkday.split(',')
+                            this.checkedWorkday = strCheckWorkday.map(Number)
+                            console.log(this.checkedWorkday)
                         }else{
                             this.$message.error(res.msg || '操作失败')
                         }
@@ -252,7 +256,7 @@
                 },
 
                 handleCheckAllChangeWorkdays(val) {
-                    var checkedsItem = val ? this.workdayOption : []
+                    let checkedsItem = val ? this.workdayOption : []
                     if (checkedsItem.length > 0) {
                         checkedsItem.map(item => {
                             this.ruleForm.checkWorkday.push(item.id)
@@ -265,9 +269,9 @@
                 handleCheckColumnChangeWorkdays(value) {
                     let checkedCount = value.length
                     this.checkAll = checkedCount === this.names.length
+                    this.ruleForm.checkWorkday=value.join(',')
                     this.isIndeterminate = checkedCount > 0 && checkedCount < this.names.length
                 },
-
                 inputHandle(val,index){},
                 submitForm(formName,st){
                     this.$refs[formName].validate((valid)=>{
@@ -277,7 +281,7 @@
                             params.jobId=this.ruleForm.jobId
                             params.storeId=this.ruleForm.storeId
                             params.checkDuration=this.ruleForm.checkDuration
-                            params.checkWorkday=this.ruleForm.checkWorkday.join()
+                            params.checkWorkday=this.ruleForm.checkWorkday
                             params.startTime=this.ruleForm.startTime
                             params.endTime=this.ruleForm.endTime
                             console.log(params)
@@ -327,12 +331,12 @@
                         }
                     })
                 },
+
                 handleAvatarSuccess (response, file, fileList) {
                     // 拼接down接口预览
                     if(response.code === 0 && response.msg === '未登录'){
                       window.top.location.href = '../../page/login.html'
                     }else{
-                    //   this.imageUrl = `/common/download?name=${response.data}`
                        this.ruleForm.image = response.data
                     }
                 },

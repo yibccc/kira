@@ -24,7 +24,7 @@ function enableOrDisableStore (params) {
     })
   }
   
-  // 修改---添加门店
+  // 修改---编辑门店
   function editStore (params) {
     return $axios({
       url: '/stores',

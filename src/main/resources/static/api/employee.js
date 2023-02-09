@@ -24,10 +24,10 @@ function enableOrDisableEmployee (params) {
     })
   }
   
-  // 修改---添加员工
+  // 修改---编辑员工
   function editEmployee (params) {
     return $axios({
-      url: '/employees',
+      url: '/employees/',
       method: 'put',
       data: { ...params }
     })
@@ -63,7 +63,7 @@ function enableOrDisableEmployee (params) {
   // 查询详情
 function queryEmployeeById (id) {
   return $axios({
-    url: '/employees/${id}',
+    url: `/employees/${id}`,
     method: 'get'
   })
 }

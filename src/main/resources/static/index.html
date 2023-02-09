@@ -275,8 +275,8 @@
                             editUser({'id':this.id,'password':params.password}).then(res=>{
                                 if(res.code == 1){
                                     this.$message.success('修改密码成功！')
-                                    this.pwdDialogVisible=flase
-                                    this.handleQuery()
+                                    this.pwdDialogVisible = false
+                                    // this.handleQuery()
                                 }else{
                                     this.$message.error(res.msg || '修改密码失败')
                                 }
