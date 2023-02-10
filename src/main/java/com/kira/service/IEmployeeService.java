@@ -1,6 +1,5 @@
 package com.kira.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kira.domain.Employee;
 
@@ -12,4 +11,5 @@ public interface IEmployeeService extends IService<Employee> {
 //    IPage<Employee> getPage(int currentPage,int pageSize);
     //新增员工，同时插入偏好数据;
 //    public void saveWithPreference();
+
 }

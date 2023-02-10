@@ -55,13 +55,21 @@ public class StoreController {
         return R.success(pageInfo);
     }
 
-    //删除门店
+//    //删除门店
+//    @DeleteMapping
+//    public R<String> deleteById(Integer id){
+//        storeService.removeById(id);
+//        return R.success("删除成功");
+//    }
+    //批量删除
     @DeleteMapping
-    public R<String> deleteById(Integer id){
-        storeService.removeById(id);
+    public R<String> deleteByIds(String id){
+        String[] nums = id.split(",");
+        for(int  c=0;c<nums.length;c++) {
+            storeService.removeById(nums[c]);
+        }
         return R.success("删除成功");
     }
-
     //根据id修改
     @PutMapping
     public R<String> update(@RequestBody Store store){
