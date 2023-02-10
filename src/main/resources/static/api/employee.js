@@ -27,7 +27,7 @@ function enableOrDisableEmployee (params) {
   // 修改---编辑员工
   function editEmployee (params) {
     return $axios({
-      url: '/employees/',
+      url: '/employees',
       method: 'put',
       data: { ...params }
     })
@@ -71,7 +71,7 @@ function queryEmployeeById (id) {
 //获取偏好
 function getFlavorById(id){
   return $axios({
-    url:`/flavors/${id}`,
+    url:`/employees/flavors/${id}`,
     method:'get'
   })
 }
