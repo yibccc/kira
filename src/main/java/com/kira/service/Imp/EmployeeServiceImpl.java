@@ -1,12 +1,9 @@
 package com.kira.service.Imp;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kira.dao.EmployeeDao;
 import com.kira.domain.Employee;
 import com.kira.service.IEmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,13 +12,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class EmployeeServiceImpl extends ServiceImpl<EmployeeDao, Employee> implements IEmployeeService {
-    @Autowired
-    private EmployeeDao employeeDao;
 
+//    @Autowired
+//    private EmployeeDao employeeDao;
 //    @Override
 //    public IPage<Employee> getPage(int currentPage, int pageSize) {
 //        IPage page = new Page(currentPage,pageSize);
 //        employeeDao.selectPage(page,null);
 //        return page;
 //    }
+
 }

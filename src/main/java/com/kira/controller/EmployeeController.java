@@ -1,25 +1,20 @@
 package com.kira.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kira.controller.utils.R;
-import com.kira.domain.Employee;
-import com.kira.domain.Job;
-import com.kira.domain.Store;
-import com.kira.domain.User;
+import com.kira.domain.*;
 import com.kira.dto.EmployeeDto;
 import com.kira.service.IEmployeeService;
 import com.kira.service.IJobService;
 import com.kira.service.IStoreService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,12 +84,22 @@ public class EmployeeController {
         return R.success("修改成功！");
     }
 
-    //根据id删除
-    @DeleteMapping
-    public R<String> deleteById(Integer id){
-        employeeService.removeById(id);
-        return R.success("删除成功");
+//    //根据id删除
+//    @DeleteMapping
+//    public R<String> deleteById(Integer id){
+//        employeeService.removeById(id);
+//        return R.success("删除成功");
+//    }
+
+//    批量删除
+@DeleteMapping
+public R<String> deleteByIds(String id){
+    String[] nums = id.split(",");
+    for(int  c=0;c<nums.length;c++) {
+        employeeService.removeById(nums[c]);
     }
+    return R.success("删除成功");
+}
 
     //新增
     @PostMapping
