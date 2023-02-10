@@ -12,7 +12,6 @@ import java.util.List;
  */
 @Data
 public class EmployeeDto extends Employee {
-//    private List<Employee> employees = new ArrayList<>();
 
     private String jobName;
 

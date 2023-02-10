@@ -100,15 +100,35 @@ public class EmployeeController {
     @PostMapping
     public R<String> save(@RequestBody Employee employee){
         log.info("新增员工，员工信息：",employee.toString());
+        if(null == employee.getCheckDuration()){
+            employee.setCheckDuration(4);
+        }
+        if("" == employee.getCheckWorkday()){
+            employee.setCheckWorkday("1,2,3,4,5");
+        }
+        if("" == employee.getStartTime()){
+            employee.setStartTime("9:00");
+        }
+        if ("" == employee.getEndTime()){
+            employee.setEndTime("17:00");
+        }
         employeeService.save(employee);
         return R.success("新增成功");
     }
 
+
+    //回显
     @GetMapping("/{id}")
     public R<Employee> getById(@PathVariable Integer id){
         Employee employee  = employeeService.getById(id);
+
         return R.success(employee);
     }
 
-
+    //查询偏好
+    @GetMapping("/flavors/{id}")
+    public R<Employee> getFlavorsById(@PathVariable Integer id){
+        Employee employee = employeeService.getById(id);
+        return R.success(employee);
+    }
 }
