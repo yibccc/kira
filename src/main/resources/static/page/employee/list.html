@@ -244,6 +244,7 @@
                 handleClose(done){
                     this.$confirm('确定关闭吗').then(() => {
                         // function(done)，done 用于关闭 Dialog
+                        this.workday=[]
                         done();
                     }).catch(() => {
                         console.log("点击确定时触发");
