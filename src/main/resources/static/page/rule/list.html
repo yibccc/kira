@@ -121,18 +121,16 @@
                     pageSize:10,
                     tableData:[],
                     id:'',
-                    // user:''
                 }
             },
             computed:{},
             created(){
                 this.init()
-                this.user = JSON.parse(localStorage.getItem('userInfo')).usename
+                this.user = JSON.parse(localStorage.getItem('userInfo')).username
             },
             mounted(){},
             methods: {
                 async init () {
-                    // console.log('run');
                     const params = {
                         page: this.page,
                         pageSize: this.pageSize,

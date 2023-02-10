@@ -35,7 +35,7 @@
                     ></i>
                 </el-input>
                 <div class="tableLab">
-                    <span class="span-btn delBut non" @click="deleteHandle('批量', null)" :disabled="this.checkList.length === 0">批量删除</span>
+                    <span class="span-btn delBut non" @click="deleteEmployeeHandle('批量', null)" :disabled="this.checkList.length === 0">批量删除</span>
                     <span class="span-btn blueBug non" @click="statusHandle('1')" :disabled="this.checkList.length === 0">批量启用</span>
                     <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')" :disabled="this.checkList.length === 0">批量停用</span>
                     <el-button
@@ -111,7 +111,7 @@
                         <el-form ref="flavorForm" :model="flavorForm">
                             <el-form-item label="工作日偏好：">{{workday}}</el-form-item>
                             <el-form-item label="工作时间偏好：">{{startWorktime}}-{{endWorktime}}</el-form-item>
-                            <el-form-item label="班次时长偏好：">{{duration}}小时</el-form-item>
+                            <el-form-item label="班次时长偏好：">{{duration}}个小时</el-form-item>
                         </el-form>
                     </div>
                 </el-dialog>
