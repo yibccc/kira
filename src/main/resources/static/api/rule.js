@@ -1,6 +1,6 @@
 function getRuleList(params){
     return $axios({
-        url:'/rules/page',
+        url:'/rules/list',
         method:'get',
         params
     })
@@ -35,16 +35,16 @@ function getRuleList(params){
 
   function getJobList(params){
     return $axios({
-        url:'/jobs',
+        url:'/jobs/list',
         method:'get',
         params
     })
   }
 
     // 查询详情
-const queryRuleById = (id) => {
+function queryRuleById (id) {
     return $axios({
-      url: `/rules/${id}`,
-      method: 'get'
+        url: `/rules/${id}`,
+        method: 'get'
     })
-  }
+}

@@ -1,76 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能排班系统</title>
-    <link rel="stylesheet" href="../../styles/common.css">
-    <link rel="stylesheet" href="../../styles/page.css">
-    <link rel="stylesheet" href="../../plugins/element-ui/index.css">
-    <link rel="stylesheet" href="../../styles/schedule.css">
-    <link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
-    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
-    <style>
-        
-    </style>
-</head>
-<body>
-    <div class="dashboard-container" id="schedule-app">
-        <div class="container">
-            <div class="tableBar">
-                <div class="storedropdown">
-                    <el-select class="dropdown"  type="primary" v-model="selectedStoreId" filterable placeholder="请选择门店" clearable="" @change="storeChange">
-                        <el-option v-for="item in storeList" :key="item.id" :label="item.name" :value="item.id"></el-option>  
-                    </el-select>
-                </div>
-                
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>智能排班系统</title>
+		<link rel="stylesheet" href="../../styles/common.css">
+		<link rel="stylesheet" href="../../styles/page.css">
+		<link rel="stylesheet" href="../../plugins/element-ui/index.css">
+		<link rel="stylesheet" href="../../styles/schedule.css">
+		<link rel="stylesheet" href="../../plugins/font-awesome/css/font-awesome.min.css">
+		<script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+		<style>
+
+		</style>
+	</head>
+	<body>
+		<div class="dashboard-container" id="schedule-app">
+			<div style="padding-left: 100px;padding-right: 180px;" class="container">
+				<div class="tableBar">
+					<div style="display: flex;justify-content: center;align-items: center;width: 100vw;">
+						<el-select type="primary" v-model="selectedStoreId" filterable placeholder="请选择门店" clearable=""
+							@change="storeChange">
+							<el-option v-for="item in storeList" :key="item.id" :label="item.name" :value="item.id">
+							</el-option>
+						</el-select>
+					</div>
+
+				</div>
+				<div style="height: 100px;display: flex;">
+					<div style="flex: 1;cursor: pointer;">
+						  <el-date-picker
+						      v-model="value2"
+						      type="month"
+						      placeholder="选择月">
+						    </el-date-picker>
+						<div style="width: 200px;padding: 10px 20px;border: 1px #000000 solid">
+							<span :style="chakan=='day'?'color:blue':'#000'" @click="chakan='day'">按日查看</span>
+							<el-divider direction="vertical"></el-divider>
+							<span  :style="chakan=='week'?'color:blue':'#000'"  @click="chakan='week'">按周查看</span>
+						</div>
+					</div>
+					<div style="width: 100px"></div>
+					<div style="width: 100%;">
+						<div style="display: flex;flex: 2;">
+							<div style="font-size: 30px;" v-text="'<'"></div>
+							<div style="width: 120%;text-align: center;">
+								<div>周一 ~ 周日</div>
+								<div>10月10日 ~ 10月16日</div>
+							</div>
+							<div style="width: 120%;text-align: center;">
+								<div>周一 ~ 周日</div>
+								<div>10月10日 ~ 10月16日</div>
+							</div>
+							<div style="width: 120%;text-align: center;">
+								<div>周一 ~ 周日</div>
+								<div>10月10日 ~ 10月16日</div>
+							</div>
+							<div style="font-size: 30px;" v-text="'>'"></div>
+						</div>
+					</div>
+				</div>
+
+			<div style="height: 50px;display: flex;">
+				<div style="width: 250px;flex: 1;">
+					<el-select aria-placeholder="分组"></el-select>
+				</div>
+				<div style="">
+					<div style="display: flex;float: right;flex: 1;">
+						<el-button>删除</el-button>
+						<el-button>编辑</el-button>
+					</div>
+				</div>
+			</div>
+
+			<div style="display: flex;">
+			<div v-for="item in dataInfoList" style="width: 20%;height: 90px;border-left: 1px #000000 solid;border-top: 1px #000000 solid;border-right: 1px #000000 solid;text-align: center;display: flex;flex-wrap: wrap;justify-content: center;align-items: center"
+                 :style="item.iselect?'background:#68AFD3':''">
+              <div style="width: 100%">  {{item.week}}</div>
+                <div style="width: 100%">  {{item.date}}</div>
+			</div>
             </div>
-        </div>
-    </div>
-    <script src="../../plugins/vue/vue.js"></script>
-    <script src="../../plugins/element-ui/index.js"></script>
-    <script src="../../plugins/axios/axios.min.js"></script>
-    <script src="../../js/request.js"></script>
-    <script src="../../api/schedule.js"></script>
-</body>
-    <script>
-        new Vue({
-            el:'#schedule-app',
-            data(){
-                return{
-                    selectedStoreId:[],
-                    storeList:[],
-                }
-            },
-            computed:{},
-            created(){
-                this.init()
-                this.user = JSON.parse(localStorage.getItem('userInfo')).username
-            },
-            mounted(){},
-            methods: {
-                async init () {
-                    const params = {
-                        page: this.page,
-                        pageSize: this.pageSize,
-                        name: this.input ? this.input : undefined
-                    }
-                    await getStoreList(params).then(res => {
-                        console.log(res.data);
-                        if (String(res.code) === '1') {
-                            this.storeList = res.data.records || []
-                            this.selectedStoreId = res.data.id
-                        }
-                    }).catch(err => {
-                        this.$message.error('请求出错了：' + err)
-                    })
-                },
-                storeChange(){
-                    console.log("选中门店id:",this.selectedStoreId);
-                }
-            },
-                
-        })
-    </script>
+                <div style="display: flex;">
+                <div style="width: 100%;" v-for="item in dataInfoList">
+                    <div v-for="item2 in item.data" style="width: 100%;height: 90px;border: 1px #000000 solid; text-align: center">
+                        {{item2.name}}
+                    </div>
+                </div>
+                </div>
+			</div>
+		</div>
+		<script src="../../plugins/vue/vue.js"></script>
+		<script src="../../plugins/element-ui/index.js"></script>
+		<script src="../../plugins/axios/axios.min.js"></script>
+		<script src="../../js/request.js"></script>
+		<!-- <script src="../../api/schedule.js"></script> -->
+		<script src="../../api/store.js"></script>
+	</body>
+	<script>
+		new Vue({
+			el: '#schedule-app',
+			data() {
+				return {
+					value2:'',
+					chakan:'day',
+					selectedStoreId: [],
+					storeList: [],
+					dataInfoList:[
+						{
+							date:'10月1号',
+							week:'周一',
+							iselect:true,
+							data:[
+								{
+									name:'111'
+								},
+								{
+									name:'222'
+								},
+								{
+									name:'33'
+								},
+								{
+									name:'444'
+								},
+								{
+									name:'555'
+								},
+								{
+									name:'666'
+								}
+							]
+						},
+						
+							{
+								date:'10月2号',
+								week:'周二',
+								iselect:false,
+								data:[
+									{
+										name:'1'
+									},
+									{
+										name:'2'
+									},
+									{
+										name:'3'
+									},
+									{
+										name:'4'
+									},
+									{
+										name:'5'
+									},
+									{
+										name:'6'
+									}
+								]
+							},
+							
+						
+							{
+								date:'10月3号',
+								week:'周三',
+								iselect:false,
+								data:[
+									{
+										name:'1'
+									},
+									{
+										name:'2'
+									},
+									{
+										name:'3'
+									},
+									{
+										name:'4'
+									},
+									{
+										name:'5'
+									},
+									{
+										name:'6'
+									}
+								]
+							},
+							
+						
+							{
+								date:'10月4号',
+								week:'周四',
+								iselect:false,
+								data:[
+									{
+										name:'1'
+									},
+									{
+										name:'2'
+									},
+									{
+										name:'3'
+									},
+									{
+										name:'4'
+									},
+									{
+										name:'5'
+									},
+									{
+										name:'6'
+									}
+								]
+							},
+							
+						
+							{
+								date:'10月5号',
+								week:'周五',
+								iselect:false,
+								data:[
+									{
+										name:'1'
+									},
+									{
+										name:'2'
+									},
+									{
+										name:'3'
+									},
+									{
+										name:'4'
+									},
+									{
+										name:'5'
+									},
+									{
+										name:'6'
+									}
+								]
+							},
+							
+						
+							{
+								date:'10月6号',
+								week:'周六',
+								iselect:false,
+								data:[
+									{
+										name:'1'
+									},
+									{
+										name:'2'
+									},
+									{
+										name:'3'
+									},
+									{
+										name:'4'
+									},
+									{
+										name:'5'
+									},
+									{
+										name:'6'
+									}
+								]
+							},
+							
+						
+							{
+								date:'10月7号',
+								week:'周日',
+								iselect:false,
+								data:[
+									{
+										name:'1'
+									},
+									{
+										name:'2'
+									},
+									{
+										name:'3'
+									},
+									{
+										name:'4'
+									},
+									{
+										name:'5'
+									},
+									{
+										name:'6'
+									}
+								]
+							},
+							
+						
+					]
+				}
+			},
+			computed: {},
+			created() {
+				this.user = JSON.parse(localStorage.getItem('userInfo')).username
+				this.init()
+			},
+			mounted() {},
+			methods: {
+				async init() {
+					const params = {
+						page: 1,
+						pageSize: 1000,
+					}
+					await getStoreList(params).then(res => {
+						console.log(res.data);
+						if (String(res.code) === '1') {
+							this.storeList = res.data.records || []
+							this.selectedStoreId = res.data.id
+						}
+					}).catch(err => {
+						this.$message.error('请求出错了：' + err)
+					})
+				},
+				storeChange() {
+					console.log("选中门店id:", this.selectedStoreId);
+				}
+			},
+
+		})
+	</script>
 </html>

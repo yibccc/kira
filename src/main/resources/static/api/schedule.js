@@ -1,6 +1,6 @@
 function getStoreList(params){
     return $axios({
-        url:'/stores/page',
+        url:'/stores/lift',
         method:'get',
         params
     })
