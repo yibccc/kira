@@ -71,7 +71,7 @@ function queryEmployeeById (id) {
 //获取偏好
 function getFlavorById(id){
   return $axios({
-    url:'/flavors/${id}',
+    url:`/flavors/${id}`,
     method:'get'
   })
 }

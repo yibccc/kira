@@ -205,7 +205,6 @@
             mounted(){},
             methods: {
                 async init () {
-                    // console.log('run');
                     const params = {
                         page: this.page,
                         pageSize: this.pageSize,
@@ -256,6 +255,10 @@
                         this.DialogVisible=true
                         if(String(res.code) === '1'){
                             this.flavorForm = {...res.data}
+                            let strCheckWorkday =this.flavorForm.checkWorkday.split(',')
+                            this.workday = strCheckWorkday.map(Number)
+                            console.log(this.workday)
+                            console.log(this.flavorForm)
                         }else{
                             this.$message.error(res.msg || '操作失败')
                         }

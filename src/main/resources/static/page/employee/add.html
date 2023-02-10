@@ -160,13 +160,13 @@
                     jobList:[],
                     storeList:[],
                     workdayOption:[
-                        {id:0,value:'星期日'},
                         {id:1,value:'星期一'},
                         {id:2,value:'星期二'},
                         {id:3,value:'星期三'},
                         {id:4,value:'星期四'},
                         {id:5,value:'星期五'},
                         {id:6,value:'星期六'},
+                        {id:7,value:'星期日'},
                     ],
                     isIndeterminate:true,
                     checkAll:false,
@@ -203,6 +203,9 @@
                         ],
                         'storeId':[
                             {'required':true,'message':'请选择所属门店','trigger':'blur'}
+                        ],
+                        'email':[
+                            {'required':true,'message':'请填写电子邮件地址','trigger':'change'}
                         ],
                     }
                 }
@@ -269,7 +272,7 @@
                 handleCheckColumnChangeWorkdays(value) {
                     let checkedCount = value.length
                     this.checkAll = checkedCount === this.names.length
-                    this.ruleForm.checkWorkday=value.join(',')
+                    this.ruleForm.checkWorkday = value
                     this.isIndeterminate = checkedCount > 0 && checkedCount < this.names.length
                 },
                 inputHandle(val,index){},
@@ -281,7 +284,7 @@
                             params.jobId=this.ruleForm.jobId
                             params.storeId=this.ruleForm.storeId
                             params.checkDuration=this.ruleForm.checkDuration
-                            params.checkWorkday=this.ruleForm.checkWorkday
+                            params.checkWorkday=this.ruleForm.checkWorkday.join()
                             params.startTime=this.ruleForm.startTime
                             params.endTime=this.ruleForm.endTime
                             console.log(params)
