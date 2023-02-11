@@ -36,6 +36,24 @@ public class StoreController {
     @PostMapping
     public R<String> save(@RequestBody Store store){
         log.info("新增商店，商店信息：｛｝",store.toString());
+        if("" == store.getPrepTime()){
+            store.setPrepTime("01:00:00");
+        }
+        if ("" == store.getClosureTime()){
+            store.setClosureTime("02:00:00");
+        }
+        if (null == store.getDutyNum()){
+            store.setDutyNum(2);
+        }
+        if (null == store.getEachCleanArea()){
+            store.setEachCleanArea(80);
+        }
+        if (null == store.getEachManageArea()){
+            store.setEachManageArea(100);
+        }
+        if (0 == store.getEachServe()){
+            store.setEachServe((float) 3.8);
+        }
         storeService.save(store);
         return R.success("新增成功");
     }
