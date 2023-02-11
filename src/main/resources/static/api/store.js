@@ -49,4 +49,11 @@ function queryStoreById (id) {
     method: 'get'
   })
 }
+//获取规则
+function getRuleById(id){
+    return $axios({
+        url:`/stores/rules/${id}`,
+        method:'get'
+    })
+}
 

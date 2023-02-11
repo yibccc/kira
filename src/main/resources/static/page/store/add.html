@@ -75,13 +75,11 @@
                             label="Ⅰ 开店前准备工作时间/h："
                             prop="prepTime"
                     >
-                        <el-time-picker
+                        <el-time-select
                                 v-model="ruleForm.prepTime"
-                                value-format="HH:mm:ss"
-                                :default-value="new Date(0,2,0,0,0,0)"
-                                :picker-options="{selectableRange: '00:30:00 - 02:00:00'}"
+                                :picker-options="{start:'00:30',step:'00:30',end:'02:00'}"
                                 placeholder="选择准备工作时间"
-                        ></el-time-picker>
+                        ></el-time-select>
                     </el-form-item>
 
                     <el-form-item
@@ -152,14 +150,11 @@
                             label="Ⅲ 关店后收尾工作时间/h："
                             prop="closureTime"
                     >
-                        <el-time-picker
+                        <el-time-select
                                 v-model="ruleForm.closureTime"
-                                format="HH:mm:ss"
-                                :default-value="new Date(0,2,0,0,0,0)"
-                                :picker-options="{selectableRange: '00:30:00 - 02:30:00'}"
+                                :picker-options="{start:'00:30',step:'00:30',end:'02:00'}"
                                 placeholder="选择收尾工作时间"
-                                value-format="HH:mm:ss"
-                        ></el-time-picker>
+                        ></el-time-select>
                     </el-form-item>
                     <el-form-item
                             label="Ⅲ.Ⅰ 每个人清理的门店面积："

@@ -14,6 +14,12 @@
         #store-app .notAdmin::after{
             border:0 !important;
         }
+        .tip{
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -74,7 +80,40 @@
                     prop="ruleId"
                     label="规则"
                     align="center"
-                ></el-table-column>
+                >
+                    <template v-slot="scope">
+                        <el-button
+                                type="text"
+                                size="small"
+                                class="greenBug non"
+                                @click.native="showRule(scope.row)"
+                                :class="{notAdmin:user !== 'admin'}"
+                        >
+                            查看规则
+                        </el-button>
+                    </template>
+                </el-table-column>
+                <el-dialog
+                        title="规则详细信息"
+                        :visible.sync="DialogVisible"
+                        width="30%"
+                        :before-close="handleClose"
+                        :append-to-body="true"
+                >
+                    <div class="form">
+                        <el-form ref="ruleData" :model="ruleData">
+                            <div class="tip">开店前</div>
+                            <el-form-item label="准备工作所需时间：">{{ruleData.prepTime}}</el-form-item>
+                            <el-form-item label="管理门店面积/员工：">{{ruleData.eachManageArea}}</el-form-item>
+                            <div class="tip">营业中</div>
+                            <el-form-item label="服务客流量/员工：">{{ruleData.eachServe}}</el-form-item>
+                            <div class="tip">闭店后</div>
+                            <el-form-item label="闭店后清理所需时间：">{{ruleData.closureTime}}</el-form-item>
+                            <el-form-item label="清理门店面积/员工：">{{ruleData.eachCleanArea}}</el-form-item>
+                            <el-form-item label="无客流量时需员工数：" style="font-weight: bold">{{ruleData.dutyNum}}</el-form-item>
+                        </el-form>
+                    </div>
+                </el-dialog>
                 <el-table-column
                     label="操作"
                     width="160"
@@ -131,7 +170,15 @@
                     pageSize:10,
                     tableData:[],
                     id:'',
-                    // user:''
+                    DialogVisible:false,
+                    ruleData:{
+                        'prepTime':'',
+                        'eachManageArea':'',
+                        'eachServe':'',
+                        'closureTime':'',
+                        'eachCleanArea':'',
+                        'dutyNum':'',
+                    }
                 }
             },
             computed:{},
@@ -160,6 +207,14 @@
                 handleQuery() {
                     this.page = 1;
                     this.init();
+                },
+                handleClose(done){
+                    this.$confirm('确定关闭吗').then(() => {
+                        // function(done)，done 用于关闭 Dialog
+                        done();
+                    }).catch(() => {
+                        console.log("点击确定时触发");
+                    });
                 },
                 //添加
                 addStoreHandle(st){
@@ -199,6 +254,17 @@
                         }).catch(err => {
                             this.$message.error('请求出错了:'+err)
                         })
+                    })
+                },
+                showRule(row){
+                    this.id = row.id
+                    getRuleById(this.id).then(res=>{
+                        this.DialogVisible=true
+                        if(String(res.code) === '1'){
+                            this.ruleData = {...res.data}
+                        }else{
+                            this.$message.error(res.msg || '操作失败')
+                        }
                     })
                 },
                 // 全部操作
