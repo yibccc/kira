@@ -35,9 +35,7 @@
                     ></i>
                 </el-input>
                 <div class="tableLab">
-                    <span class="span-btn delBut non" @click="deleteEmployeeHandle('批量', null)" :disabled="this.checkList.length === 0">批量删除</span>
-                    <span class="span-btn blueBug non" @click="statusHandle('1')" :disabled="this.checkList.length === 0">批量启用</span>
-                    <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')" :disabled="this.checkList.length === 0">批量停用</span>
+                    <span style="margin-right: 14px" class="delBut non" @click="deleteEmployeeHandle('批量', null)" :disabled="this.checkList.length === 0">批量删除</span>
                     <el-button
                         type="primary"
                         @click="addEmployeeHandle('add')"
@@ -294,16 +292,16 @@
                     })
                 },
                 //状态修改
-                statusHandle (row) {
+                statusHandle(row) {
                     this.id = row.id
                     this.status = row.status
                     this.$confirm('确认调整该员工的状态?', '提示', {
                       'confirmButtonText': '确定',
                       'cancelButtonText': '取消',
                       'type': 'warning'
-                      }).then(() => {
-                      enableOrDisableEmployee({ 'id': this.id, 'status': !this.status ? 1 : 0 }).then(res => {
-                        console.log('enableOrDisableEmployee',res)
+                      }).then(() =>{
+                      enableOrDisableEmployee({'id': this.id, 'status': !this.status ? 1 : 0 }).then(res => {
+                        console.log('id是'+this.id)
                         if (String(res.code) === '1') {
                           this.$message.success('员工状态更改成功！')
                           this.handleQuery()
