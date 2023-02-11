@@ -84,4 +84,11 @@ public class StoreController {
         Store store = storeService.getById(id);
         return R.success(store);
     }
+
+    //查询规则
+    @GetMapping("/rules/{id}")
+    public R<Store> getRulesById(@PathVariable Integer id){
+        Store store = storeService.getById(id);
+        return R.success(store);
+    }
 }
