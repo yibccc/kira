@@ -266,16 +266,56 @@
             },
             computed:{
                 rules(){
+                    const validateEachManageArea = (rule,value,callback) => {
+                        if (value.match(/^-?\d+$/)) {
+                            callback()
+                        } else {
+                            callback(new Error('请输入整数！'))
+                        }
+                    }
+                    const validateEachServe = (rule,value,callback) => {
+                        if (value.match(/^\d+(?=\.{0,1}\d+$|$)/)) {
+                            callback()
+                        } else {
+                            callback(new Error('请输入数字！'))
+                        }
+                    }
+                    const validateEachCleanArea = (rule,value,callback) => {
+                        if (value.match(/^-?\d+$/)) {
+                            callback()
+                        } else {
+                            callback(new Error('请输入整数！'))
+                        }
+                    }
+                    const validateDutyNum = (rule,value,callback) => {
+                        if (value.match(/^-?\d+$/)) {
+                            callback()
+                        } else {
+                            callback(new Error('请输入整数！'))
+                        }
+                    }
                     return{
                         'name':[
                             {'required':true,'message':'请填写门店名称','trigger':'blur'}
                         ],
                         'address':[
-                            {'required':true,'message':'请填写门店地址','trigger':'change'}
+                            {'required':true,'message':'请填写门店地址','trigger':'change'},
                         ],
                         'size':[
                             {'required':true,'message':'请填写门店占地面积','trigger':'blur'}
                         ],
+                        'eachManageArea':[
+                            { validator:validateEachManageArea,trigger:'blur'}
+                        ],
+                        'eachServe':[
+                            { validator:validateEachServe,trigger:'blur'}
+                        ],
+                        'eachCleanArea':[
+                            { validator:validateEachCleanArea,trigger:'blur'}
+                        ],
+                        'dutyNum':[
+                            { validator:validateDutyNum,trigger:'blur'}
+                        ]
                     }
                 }
             },
@@ -304,7 +344,6 @@
                     this.$refs[formName].validate((valid)=>{
                         if(valid){
                             let params = {...this.ruleForm}
-                            params.storeId=this.ruleForm.storeId
                             params.dutyNum=parseInt(this.ruleForm.dutyNum)
                             params.eachManageArea=parseInt(this.ruleForm.eachManageArea)
                             params.eachCleanArea=parseInt(this.ruleForm.eachCleanArea)
