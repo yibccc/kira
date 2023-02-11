@@ -103,7 +103,7 @@
                         -
                         <el-time-select
                                 v-model="ruleForm.endTime"
-                                :picker-options="{start: '09:00',step: '01:00',end: '23:00'}"
+                                :picker-options="{start: '09:00',step: '01:00',end: '23:00',minTime:ruleForm.startTime}"
                                 placeholder="结束工作时间"
                         ></el-time-select>
                     </el-form-item>

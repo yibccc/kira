@@ -9,6 +9,21 @@
     <link rel="stylesheet" href="../../styles/common.css">
     <link rel="stylesheet" href="../../styles/page.css">
     <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+    <style>
+        .tip{
+            text-align: center;
+            color: #2b3c5a;
+            font-size: larger;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+        .part{
+            font-size:14px;
+            color: #646465;
+            margin:15px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <div class="addBrand-container" id="store-add-app">
@@ -18,7 +33,7 @@
                 :model="ruleForm"
                 :rules="rules"
                 :inline="false"
-                label-width="180px"
+                label-width="400px"
                 class="demo-ruleForm"
             >
                 <div>
@@ -54,7 +69,141 @@
                             maxlength="20"
                         />
                     </el-form-item>
-                    
+                    <div class="part">——"请设置该门店规则"——</div>
+                    <div class="tip">开店前</div>
+                    <el-form-item
+                            label="Ⅰ 开店前准备工作时间/h："
+                            prop="prepTime"
+                    >
+                        <el-time-picker
+                                v-model="ruleForm.prepTime"
+                                value-format="HH:mm:ss"
+                                :default-value="new Date(0,2,0,0,0,0)"
+                                :picker-options="{selectableRange: '00:30:00 - 02:00:00'}"
+                                placeholder="选择准备工作时间"
+                        ></el-time-picker>
+                    </el-form-item>
+
+                    <el-form-item
+                            label="Ⅰ.Ⅰ 每个人管理的门店面积："
+                            prop="eachManageArea"
+                    >
+                        <el-input
+                                v-model="ruleForm.eachManageArea"
+                                placeholder="请输入每人所需要管理的门店面积"
+                                maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <!--                    <el-form-item-->
+                    <!--                        label="Ⅰ.Ⅱ 可执行准备工作的职位："-->
+                    <!--                    >-->
+                    <!--                        <el-checkbox  -->
+                    <!--                            class="all_t"-->
+                    <!--                            :indeterminate="isIndeterminate"-->
+                    <!--                            v-model="checkAll"-->
+                    <!--                            @change="handleCheckAllChangeJobs"-->
+                    <!--                        >全选</el-checkbox>-->
+                    <!--                        <el-checkbox-group-->
+                    <!--                            v-model="checkeds"-->
+                    <!--                            @change="handleCheckedColumnChangeJobs"-->
+                    <!--                        >-->
+                    <!--                            <el-checkbox-->
+                    <!--                                v-for="(item) in jobList"-->
+                    <!--                                :label="item.name"-->
+                    <!--                                :key="item.name"-->
+                    <!--                            >{{ item.name }}</el-checkbox>-->
+                    <!--                        </el-checkbox-group>-->
+                    <!--                    </el-form-item>-->
+                    <div class="tip">营业中</div>
+                    <el-form-item
+                            label="Ⅱ 固定值（eg:人数=预测客流/3.8）："
+                            prop="eachServe"
+                    >
+                        <el-input
+                                v-model="ruleForm.eachServe"
+                                placeholder="请输入一个数用于计算开店营业所需人数"
+                                maxlength="20"
+                        />
+                    </el-form-item>
+
+                    <!--                    <el-form-item-->
+                    <!--                        label="Ⅱ.Ⅰ 可执行开店营业的职位："-->
+                    <!--                    >-->
+                    <!--                        <el-checkbox  -->
+                    <!--                            class="all_t"-->
+                    <!--                            :indeterminate="isIndeterminate"-->
+                    <!--                            v-model="checkAll"-->
+                    <!--                            @change="handleCheckAllChangeJobs"-->
+                    <!--                        >全选</el-checkbox>-->
+                    <!--                        <el-checkbox-group-->
+                    <!--                            v-model="checkeds"-->
+                    <!--                            @change="handleCheckedColumnChangeJobs"-->
+                    <!--                        >-->
+                    <!--                            <el-checkbox-->
+                    <!--                                v-for="(item) in jobList"-->
+                    <!--                                :label="item.name"-->
+                    <!--                                :key="item.name"-->
+                    <!--                            >{{ item.name }}</el-checkbox>-->
+                    <!--                        </el-checkbox-group>-->
+                    <!--                    </el-form-item>-->
+                    <div class="tip">关店后</div>
+                    <el-form-item
+                            label="Ⅲ 关店后收尾工作时间/h："
+                            prop="closureTime"
+                    >
+                        <el-time-picker
+                                v-model="ruleForm.closureTime"
+                                format="HH:mm:ss"
+                                :default-value="new Date(0,2,0,0,0,0)"
+                                :picker-options="{selectableRange: '00:30:00 - 02:30:00'}"
+                                placeholder="选择收尾工作时间"
+                                value-format="HH:mm:ss"
+                        ></el-time-picker>
+                    </el-form-item>
+                    <el-form-item
+                            label="Ⅲ.Ⅰ 每个人清理的门店面积："
+                            prop="eachCleanArea"
+                    >
+                        <el-input
+                                v-model="ruleForm.eachCleanArea"
+                                placeholder="请输入每个人所需清理的门店面积"
+                                maxlength="5"
+                        />
+                    </el-form-item>
+
+                    <el-form-item
+                            label="若没有客流量需值班的人数："
+                            style="font-weight: bold"
+                            prop="dutyNum"
+                    >
+                        <el-input
+                                v-model="ruleForm.dutyNum"
+                                placeholder="请输入没有客流量需值班的人数"
+                                maxlength="5"
+                        />
+                    </el-form-item>
+
+                    <!--                    <el-form-item-->
+                    <!--                        label="Ⅲ.Ⅱ 可执行收尾工作的职位："-->
+                    <!--                    >-->
+                    <!--                        <el-checkbox  -->
+                    <!--                            class="all_t"-->
+                    <!--                            :indeterminate="isIndeterminate"-->
+                    <!--                            v-model="checkAll"-->
+                    <!--                            @change="handleCheckAllChangeJobs"-->
+                    <!--                        >全选</el-checkbox>-->
+                    <!--                        <el-checkbox-group-->
+                    <!--                            v-model="checkeds"-->
+                    <!--                            @change="handleCheckedColumnChangeJobs"-->
+                    <!--                        >-->
+                    <!--                            <el-checkbox-bottom-->
+                    <!--                                v-for="(item) in jobList"-->
+                    <!--                                :label="item.name"-->
+                    <!--                                :key="item.name"-->
+                    <!--                            >{{ item.name }}</el-checkbox-bottom>-->
+                    <!--                        </el-checkbox-group>-->
+                    <!--                    </el-form-item>-->
                 </div>
                 <div class="subBox prefer">
                     <el-form-item>
@@ -106,8 +255,18 @@
                         'name':'',
                         'address':'',
                         'size':'',
+                        'prepTime':'',
+                        'eachManageArea':'',
+                        'eachServe':'',
+                        'closureTime':'',
+                        'eachCleanArea':'',
+                        'dutyNum':'',
                     },
-                    mak:false
+                    mak:false,
+                    isIndeterminate:true,
+                    checkAll:false,
+                    checkeds:[],
+                    // jobList:[]
                 }
             },
             computed:{
@@ -163,6 +322,12 @@
                                                 'name':'',
                                                 'address':'',
                                                 'size':'',
+                                                'prepTime':'',
+                                                'eachManageArea':'',
+                                                'eachServe':'',
+                                                'closureTime':'',
+                                                'eachCleanArea':'',
+                                                'dutyNum':'',
                                             }
                                         }
                                     }else{
@@ -194,7 +359,6 @@
                     if(response.code === 0 && response.msg === '未登录'){
                       window.top.location.href = '../../page/login.html'
                     }else{
-                    //   this.imageUrl = `/common/download?name=${response.data}`
                        this.ruleForm.image = response.data
                     }
                 },

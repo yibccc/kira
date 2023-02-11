@@ -1,6 +1,6 @@
 function getRuleList(params){
     return $axios({
-        url:'/rules/list',
+        url:'/rules/page',
         method:'get',
         params
     })
@@ -33,14 +33,21 @@ function getRuleList(params){
     })
   }
 
-  function getJobList(params){
+  // function getJobList(params){
+  //   return $axios({
+  //       url:'/jobs/list',
+  //       method:'get',
+  //       params
+  //   })
+  // }
+//获取门店列表
+function getStoreList(params){
     return $axios({
-        url:'/jobs/list',
+        url:'/stores/list',
         method:'get',
         params
     })
-  }
-
+}
     // 查询详情
 function queryRuleById (id) {
     return $axios({
