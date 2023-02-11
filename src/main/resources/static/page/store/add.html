@@ -305,6 +305,10 @@
                         if(valid){
                             let params = {...this.ruleForm}
                             params.storeId=this.ruleForm.storeId
+                            params.dutyNum=parseInt(this.ruleForm.dutyNum)
+                            params.eachManageArea=parseInt(this.ruleForm.eachManageArea)
+                            params.eachCleanArea=parseInt(this.ruleForm.eachCleanArea)
+                            params.eachServe=parseFloat(this.ruleForm.eachServe)
                             if(this.actionType == 'add'){
                                 delete params.id
                                 addStore(params).then(res=>{
