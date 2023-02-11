@@ -92,14 +92,14 @@ public class EmployeeController {
 //    }
 
 //    批量删除
-@DeleteMapping
-public R<String> deleteByIds(String id){
-    String[] nums = id.split(",");
-    for(int  c=0;c<nums.length;c++) {
-        employeeService.removeById(nums[c]);
+    @DeleteMapping
+    public R<String> deleteByIds(String id){
+        String[] nums = id.split(",");
+        for(int  c=0;c<nums.length;c++) {
+            employeeService.removeById(nums[c]);
+        }
+        return R.success("删除成功");
     }
-    return R.success("删除成功");
-}
 
     //新增
     @PostMapping
