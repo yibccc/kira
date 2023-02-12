@@ -105,17 +105,17 @@ public class EmployeeController {
     @PostMapping
     public R<String> save(@RequestBody Employee employee){
         log.info("新增员工，员工信息：",employee.toString());
-        if(null == employee.getCheckDuration()){
-            employee.setCheckDuration(4);
-        }
+//        if(null == employee.getCheckDuration()){
+//            employee.setCheckDuration(4);
+//        }
         if("" == employee.getCheckWorkday()){
-            employee.setCheckWorkday("1,2,3,4,5");
+            employee.setCheckWorkday(null);
         }
         if("" == employee.getStartTime()){
-            employee.setStartTime("9:00");
+            employee.setStartTime(null);
         }
         if ("" == employee.getEndTime()){
-            employee.setEndTime("17:00");
+            employee.setEndTime(null);
         }
         employeeService.save(employee);
         return R.success("新增成功");

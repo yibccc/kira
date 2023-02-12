@@ -1,9 +1,12 @@
 package com.kira.domain;
 
+import lombok.Data;
+
 /**
  * @author Kira
  * @create 2023-02-11 17:11
  */
+@Data
 public class PaiBan {
     private Integer id;
     private Integer employeeId;
@@ -11,4 +14,5 @@ public class PaiBan {
     private String startTime;
     private String endTime;
     private String date;
+    private Integer jobId;
 }
