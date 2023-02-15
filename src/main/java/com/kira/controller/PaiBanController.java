@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static sun.misc.Version.print;
-
 /**
  * @author Kira
  * @create 2023-02-12 15:21
@@ -40,12 +38,10 @@ public class PaiBanController {
     @Autowired
     private IJobService jobService;
     //输出排班表（日）
-    @GetMapping("/list")
+    @GetMapping("/list/day")
     private R<Page> printDay(Integer storeId,String date){
         int pageSize=10000000;
         int page = 1;
-//                dateToWeek(date);
-
         //分页构造器
         Page<PaiBan> pageInfo = new Page(page,pageSize);
         Page<PaiBanDto> paiBanDtoPage = new Page<>();
@@ -76,7 +72,7 @@ public class PaiBanController {
             Employee employee = employeeService.getById(employeeId);
             String employeeName = employee.getName();
             paiBanDto.setEmployeeName(employeeName);
-            paiBanDto.setWeek(dateToWeek(date));
+            paiBanDto.setWeek(date);
             return paiBanDto;
         }).collect(Collectors.toList());
         paiBanDtoPage.setRecords(list);
@@ -85,10 +81,14 @@ public class PaiBanController {
 
     }
     //输出排班表（周）
+    @GetMapping("/list/week")
+    private R<Page> printWeek(){
+        return null;
+    }
     //根据日期判断周几
-    public static String dateToWeek(String datetime) {
+    public static Integer dateToWeek(String datetime) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String[] weekDays = {"zhou7","zhou1","zhou2","zhou3","zhou4","zhou5","zhou6",};
+        Integer[] weekDays = {7,1,2,3,4,5,6};
         Calendar cal = Calendar.getInstance();
         Date date;
         try {
@@ -100,4 +100,5 @@ public class PaiBanController {
         int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
         return weekDays[w];
     }
+
 }
