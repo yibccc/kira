@@ -30,7 +30,6 @@
 			font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 			font-size: 14px;
 		}
-
 		#calendar {
 			max-width: 1100px;
 			margin: 40px auto;
@@ -43,7 +42,7 @@
 		}
 		.table{
 			position: absolute;
-			top:200px;
+			top:250px;
 			left:1px;
 			width: 100%;
 			table-layout: fixed;
@@ -60,6 +59,7 @@
 					ref="ruleForm"
 					:model="ruleForm"
 					:inline="false"
+					:rules="rules"
 					label-width="180px"
 					class="demo-ruleForm"
 					action="select.php"
@@ -81,18 +81,18 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-<!--				<el-form-item-->
-<!--					label="请选择职位："-->
-<!--					prop="jobId"-->
-<!--				>-->
-<!--					<el-select-->
-<!--							v-model="ruleForm.jobId"-->
-<!--							placeholder="请选择职位"-->
-<!--							class="showByJob"-->
-<!--					>-->
-<!--						<el-option v-for="(item,index) in jobList" :key="index" :label="item.name" :value="item.id"></el-option>-->
-<!--					</el-select>-->
-<!--				</el-form-item>-->
+				<el-form-item
+					label="请选择职位："
+					prop="jobId"
+				>
+					<el-select
+							v-model="ruleForm.jobId"
+							placeholder="请选择职位"
+							class="showByJob"
+					>
+						<el-option v-for="(item,index) in jobList" :key="index" :label="item.name" :value="item.id"></el-option>
+					</el-select>
+				</el-form-item>
 				<el-form-item
 					prop="week"
 				>
@@ -129,40 +129,47 @@
 </body>
 <script type="text/javascript">
 	new Vue({
-		el:'#schedule-app',
-		data(){
-			return{
-				page:1,
-				pageSize:10,
-				counts:0,
-				tableData:[],
-				employeeList:[],
-				storeList:[],
-				jobList:[],
-				weekWork:[],
-				weeks:[],
-				maxWorkLength:0,
-				count:0,
-				ruleForm:{
-					storeId:'',
-					// jobId:'',
-					date:'',
+		el: '#schedule-app',
+		data() {
+			return {
+				page: 1,
+				pageSize: 10,
+				counts: 0,
+				tableData: [],
+				employeeList: [],
+				storeList: [],
+				jobList: [],
+				weekWork: [],
+				weeks: [],
+				maxWorkLength: 0,
+				count: 0,
+				ruleForm: {
+					storeId: '',
+					jobId:'',
+					date: '',
 				},
-				scheduleList:[],
+				scheduleList: [],
 			}
 		},
-		computed:{},
-		created(){
+		computed: {
+			rules(){
+				return{
+					'storeId':[
+						{'required':true,'message':'请选择需查看的门店','trigger':'change'}
+					],
+					'week':[
+						{'required':true,'message':'请选择需查看的周','trigger':'change'}
+					]
+				}
+			}
+		},
+		created() {
 			this.init()
 			this.getJobsList()
 			this.getStoresList()
 			this.user = JSON.parse(localStorage.getItem('userInfo')).username
 		},
-		mounted(){
-			setTimeout(()=>{
-
-			},800)
-		},
+		mounted() {},
 		methods: {
 			async init() {
 				const params = {
@@ -171,39 +178,39 @@
 				}
 			},
 			//获取职位
-			getJobsList(){
+			getJobsList() {
 				getJobList().then(res => {
-					if(res.code === 1){
-						this.jobList=res.data
-					}else{
+					if (res.code === 1) {
+						this.jobList = res.data
+					} else {
 						this.$message.error(res.msg || '操作失败')
 					}
 				})
 			},
 			//获取门店
-			getStoresList(){
+			getStoresList() {
 				getStoreList().then(res => {
-					if(res.code === 1){
-						this.storeList=res.data
-					}else{
+					if (res.code === 1) {
+						this.storeList = res.data
+					} else {
 						this.$message.error(res.msg || '操作失败')
 					}
 				})
 			},
-			submitForm(formName,st){
-				this.$refs[formName].validate((valid)=> {
+			submitForm(formName, st) {
+				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						let params = {...this.ruleForm}
 						params.storeId = this.ruleForm.storeId
 						// params.jobId = this.ruleForm.jobId
 						params.date = this.ruleForm.date.toString()
-						sessionStorage.setItem('storeIds',params.storeId)
-						sessionStorage.setItem('dates',params.date)
+						sessionStorage.setItem('storeIds', params.storeId)
+						sessionStorage.setItem('dates', params.date)
 						console.log(params)
 						getSelectedInfo(params).then(res => {
 							if (res.code === 1) {
 								this.$message.success('确认自动生成排班表')
-								this.tableData=res.data.records || []
+								this.tableData = res.data.records || []
 								this.counts = res.data.total
 								console.log(this.tableData)
 								if (!st) {
@@ -211,7 +218,7 @@
 								} else {
 									this.ruleForm = {
 										'storeId': '',
-										// 'jobId': '',
+										'jobId': '',
 										'date': ''
 									}
 								}
@@ -224,113 +231,113 @@
 					}
 				})
 			},
-			goBack(){
+			goBack() {
 				window.parent.menuHandle({
-					id:'4',
-					url:'../../page/schedule/list.html',
-					name:'排班表管理'
-				},false)
-		},
+					id: '4',
+					url: '../../page/schedule/list.html',
+					name: '排班表管理'
+				}, false)
+			},
+		}
 	})
-
 	document.addEventListener('DOMContentLoaded', function() {
-				var calendarEl = document.getElementById('calendar');
-				var calendar = new FullCalendar.Calendar(calendarEl, {
-					initialView: 'dayGridWeek',
-					//初始化本地语言
-					locale: 'zh-cn',
-					timeZone:'local',
-					//设置视图区域高度
-					contentHeight: window.screen.height - 290,
-					//初始化顶部工具栏
-					headerToolbar: {
-						left: 'today',
-						center: 'title',
-						right: 'prevYear,prev,timeGridWeek,timeGridDay,next,nextYear'
-					},
-					titleFormat: { // will produce something like "Tuesday, September 18, 2018"
-						month: 'long',
-						year: 'numeric',
-						day: 'numeric',
-						weekday: 'long'
-					},
-					//把右侧today按钮翻译为中文
-					buttonText: {
-						week:'周',
-						today: '今天',
-						day:'日',
-					},
-					defaultView:'agendaWeek', //初始化时的默认视图默认显示周
-					firstDay:1,
-					editable: true,
-					selectable: true,
-					navLinks:true,
-					minTime : '06:00:00',   //左侧时间从几点开始
-					maxTime : '22:00:00',   //左侧时间从几点结束
-					eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
-					//事件点击
-					eventClick: function(info) {
-						var eventObj = info.event;
-					},
-					//日期点击
-					// dateClick: function(info) {
-					// 	alert(info.dateStr);
+		var calendarEl = document.getElementById('calendar');
+		var calendar = new FullCalendar.Calendar(calendarEl, {
+			initialView: 'dayGridWeek',
+			//初始化本地语言
+			locale: 'zh-cn',
+			timeZone:'local',
+			//设置视图区域高度
+			contentHeight: window.screen.height - 290,
+			//初始化顶部工具栏
+			headerToolbar: {
+				left: 'today',
+				center: 'title',
+				right: 'prevYear,prev,timeGridWeek,timeGridDay,next,nextYear'
+			},
+			titleFormat: { // will produce something like "Tuesday, September 18, 2018"
+				month: 'long',
+				year: 'numeric',
+				day: 'numeric',
+				weekday: 'long'
+			},
+			//把右侧today按钮翻译为中文
+			buttonText: {
+				week:'周',
+				today: '今天',
+				day:'日',
+			},
+			defaultView:'agendaWeek', //初始化时的默认视图默认显示周
+			firstDay:1,
+			editable: true,
+			selectable: true,
+			navLinks:true,
+			minTime : '06:00:00',   //左侧时间从几点开始
+			maxTime : '22:00:00',   //左侧时间从几点结束
+			eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
+			//事件点击
+			eventClick: function(info) {
+				var eventObj = info.event;
+			},
+			//日期点击
+			// dateClick: function(info) {
+			// 	alert(info.dateStr);
 
-					// },
-					// select: function(info) {
-					// 	alert('selected ' + info.startStr + ' to ' + info.endStr);
-					// },
+			// },
+			// select: function(info) {
+			// 	alert('selected ' + info.startStr + ' to ' + info.endStr);
+			// },
 
-					// 获取要显示的数据  返回的是json格式
-					// eventSources: ["/paiban/list"],
+			// 获取要显示的数据  返回的是json格式
+			// eventSources: ["/paiban/list"],
 
-					events: function(arg, callback) {
-						var storeIds=sessionStorage.getItem('storeIds')
-						var dates=sessionStorage.getItem('dates')//此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
-						$.ajax({
-							url:"/paiban/list?storeId="+storeIds+"&date="+dates,
-							type : "GET",
-							//下面的startDate必须用单引号，不能用双引号
-							data: {},
-							cache:false,
-							dataType: "json",
-							success:function(data){
-								let events = [];
-								var val={}
-								let item=JSON.parse(JSON.stringify(data.data))
-								$.each(item.records,function(i) {
-									val={
-										title: item.records[i].employeeName,
-										start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
-										end: item.records[i].date+' '+item.records[i].endTime,
-										color: '#dc4c27',
-										// customRender:true
-									}
-									// item.records[i].date+'T'+item.records[i].startTime+'+00:00'
-									events.push(val)
-								});
-								console.log(events)
-								callback(events)
-							},
-
+			events: function(arg, callback) {
+				var storeIds=sessionStorage.getItem('storeIds')
+				var dates=sessionStorage.getItem('dates')//此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
+				$.ajax({
+					url:"/paiban/list?storeId="+storeIds+"&date="+dates,
+					type : "GET",
+					//下面的startDate必须用单引号，不能用双引号
+					data: {},
+					cache:false,
+					dataType: "json",
+					success:function(data){
+						let events = [];
+						var val={}
+						let item=JSON.parse(JSON.stringify(data.data))
+						$.each(item.records,function(i) {
+							val={
+								title: item.records[i].employeeName+'【'+item.records[i].jobName+'】',
+								start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
+								end: item.records[i].date+' '+item.records[i].endTime,
+								color: '#dc4c27',
+								// customRender:true
+							}
+							// item.records[i].date+'T'+item.records[i].startTime+'+00:00'
+							events.push(val)
 						});
-					},
-					eventRender: function(info) {
-						if(info.customRender=true){
-							console.log('info.extendedProps.description')
-							var tooltip = new Tooltip(info.el, {
-								title: info.event.extendedProps.description,
-								placement: 'top',
-								trigger: 'hover',
-								container: 'body'
-							});
-						}
+						console.log(events)
+						callback(events)
 					},
 
-		//配置获取后台数据的url
-					//eventSources: ["url"],
-					// events: function(start,end,timezone,callback){
-					// 	var events=[];
+				});
+			},
+			eventRender: function(info) {
+				if(info.customRender=true){
+					console.log('info.extendedProps.description')
+					var tooltip = new Tooltip(info.el, {
+						title: info.event.extendedProps.description,
+						placement: 'top',
+						trigger: 'hover',
+						container: 'body'
+					});
+				}
+			},
+
+			//配置获取后台数据的url
+			//eventSources: ["url"],
+			// events: function(start,end,timezone,callback){
+			// 	var events=[];
 
 			//静态数据
 			// events: [
