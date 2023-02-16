@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--	<meta http-equiv="refresh" content="5">设置页面5秒自动刷新-->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>智能排班系统</title>
 	<link rel="stylesheet" href="../../plugins/element-ui/index.css">
@@ -209,6 +210,7 @@
 						sessionStorage.setItem('selectJobIds', params.selectJobId)
 						sessionStorage.setItem('dates', params.date)
 						console.log(params)
+						location.reload()
 						getSelectedInfo(params).then(res => {
 							if (res.code === 1) {
 								this.$message.success('确认自动生成排班表')
@@ -277,7 +279,10 @@
 			editable: true,
 			selectable: true,
 			navLinks:true,
+			// isRefetch:true,
+			// lazyFetching:true,
 			slotDuration:"00:30",//时间轴以30分钟为一刻度
+			scrollTime:'06:00:00',
 			minTime:6,   //左侧时间从几点开始
 			maxTime:22,   //左侧时间从几点结束
 			dragRevertDuration:1000,//设置一秒如果拖拽不成功则回复原状
@@ -289,8 +294,8 @@
 			//日期点击
 			dateClick: function(info) {
 				add(info.dateStr);
-
 			},
+
 			// select: function(info) {
 			// 	alert('selected ' + info.startStr + ' to ' + info.endStr);
 			// },
@@ -327,7 +332,7 @@
 								title: item.records[i].employeeName+'-'+item.records[i].jobName,
 								start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
 								end: item.records[i].date+' '+item.records[i].endTime,
-								color: '#dc4c27',
+								color: this.colors,
 							}
 							events.push(val)
 						});
