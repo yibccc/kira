@@ -230,10 +230,6 @@
 					url:'../../page/schedule/list.html',
 					name:'排班表管理'
 				},false)
-			},
-			printSome(){
-				console.log('你获取到了我')
-			}
 		},
 	})
 
@@ -250,7 +246,7 @@
 					headerToolbar: {
 						left: 'today',
 						center: 'title',
-						right: 'prev,timeGridWeek,timeGridDay,next'
+						right: 'prevYear,prev,timeGridWeek,timeGridDay,next,nextYear'
 					},
 					titleFormat: { // will produce something like "Tuesday, September 18, 2018"
 						month: 'long',
@@ -268,6 +264,7 @@
 					firstDay:1,
 					editable: true,
 					selectable: true,
+					navLinks:true,
 					minTime : '06:00:00',   //左侧时间从几点开始
 					maxTime : '22:00:00',   //左侧时间从几点结束
 					eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
@@ -287,50 +284,47 @@
 					// 获取要显示的数据  返回的是json格式
 					// eventSources: ["/paiban/list"],
 
-					events: function(start,end, callback) {
+					events: function(arg, callback) {
 						var storeIds=sessionStorage.getItem('storeIds')
-						var dates=sessionStorage.getItem('dates')
-						// console.log(date)
+						var dates=sessionStorage.getItem('dates')//此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
 						$.ajax({
-							url: '/paiban/list?storeId='+storeIds+'&date='+dates,
-							method:'GET',
-							dataType: 'json',
-							data: {
-								// timeStart:$.fullCalendar.formatDate(start,"yyyy-MM-dd'T'HH:mm:ssXXX"),
-								// timeEnd:$.fullCalendar.formatDate(end,"yyyy-MM-dd'T'HH:mm:ssXXX")
-							},
-							success: function(data) { // 获取当前的数据
+							url:"/paiban/list?storeId="+storeIds+"&date="+dates,
+							type : "GET",
+							//下面的startDate必须用单引号，不能用双引号
+							data: {},
+							cache:false,
+							dataType: "json",
+							success:function(data){
 								let events = [];
-								console.log('正在获取events。。。')
 								var val={}
 								let item=JSON.parse(JSON.stringify(data.data))
-								console.log(item.records)
-								console.log(item.records[0].employeeName)
-								console.log(item.records[0].date+'T'+item.records[0].startTime+'+00:00')
-								start=item.records[0].date+'T'+item.records[0].startTime+'+00:00'
-								$.each(item.records,function(i,info) {
-									console.log('循环开始'+info.employeeName)
-										val={
-											"title": info.employeeName,
-											"start": new Date(item.records[0].date+item.records[0].startTime), // will be parsed
-											"end": new Date(item.records[0].date+' '+item.records[0].endTime),
-											"color": '#dc4c27'
-										}
+								$.each(item.records,function(i) {
+									val={
+										title: item.records[i].employeeName,
+										start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
+										end: item.records[i].date+' '+item.records[i].endTime,
+										color: '#dc4c27',
+										// customRender:true
+									}
 									// item.records[i].date+'T'+item.records[i].startTime+'+00:00'
 									events.push(val)
-								})
+								});
 								console.log(events)
 								callback(events)
 							},
+
 						});
 					},
 					eventRender: function(info) {
-						var tooltip = new Tooltip(info.el, {
-							title: info.event.extendedProps.description,
-							placement: 'top',
-							trigger: 'hover',
-							container: 'body'
-						});
+						if(info.customRender=true){
+							console.log('info.extendedProps.description')
+							var tooltip = new Tooltip(info.el, {
+								title: info.event.extendedProps.description,
+								placement: 'top',
+								trigger: 'hover',
+								container: 'body'
+							});
+						}
 					},
 
 		//配置获取后台数据的url
@@ -342,7 +336,8 @@
 			// events: [
 			// 	{
 			// 		title: "工作计划",
-			// 		start: "2023-03-15",
+			// 		start: "2023-02-13T08:00:00+08:00",
+			// 		end:"2023-02-13T10:00:00+08:00",
 			// 		color: "green"
 			// 	},
 			// 	{
@@ -352,13 +347,13 @@
 			// 	},
 			// 	{
 			// 		"title": "开会",
-			// 		"start": "2023-03-15T10:30:00+00:00",
-			// 		"end": "2023-03-15T12:30:00+00:00"
+			// 		"start": "2023-02-13T08:00:00",
+			// 		"end": "2023-02-13T10:00:00"
 			// 	},
 			// 	{
 			// 		"title": "做作业",
-			// 		"start": "2023-03-15T10:30:00+00:00",
-			// 		"end": "2023-03-15T12:30:00+00:00"
+			// 		"start": "2023-02-14 08:00:00",
+			// 		"end": "2023-02-14 10:00:00"
 			// 	},
 			// 	{
 			// 		"title": "午饭时间",
