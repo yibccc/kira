@@ -39,19 +39,22 @@ public class PaiBanController {
     private IJobService jobService;
     //输出排班表（日）
     @GetMapping("/list")
-    private R<Page> printDay(Integer storeId, String date) throws ParseException {
-        int pageSize=10000000;
-        int page = 1;
+    private R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
         String dateEnd = getLastDayOfWeek(date);
         //分页构造器
-        Page<PaiBan> pageInfo = new Page(page,pageSize);
+        Page<PaiBan> pageInfo = new Page();
         Page<PaiBanDto> paiBanDtoPage = new Page<>();
         //条件构造器
         LambdaQueryWrapper<PaiBan> queryWrapper = new LambdaQueryWrapper();
         //过滤条件
-//        getWeekByDate
+        if (null == selectJobId){
         queryWrapper.eq(PaiBan::getStoreId, storeId);
         queryWrapper.between(PaiBan::getDate,date,dateEnd);
+        }else {
+            queryWrapper.eq(PaiBan::getStoreId, storeId);
+            queryWrapper.between(PaiBan::getDate,date,dateEnd);
+            queryWrapper.eq(PaiBan::getJobId,selectJobId);
+        }
         //查询操作
         paiBanService.page(pageInfo, queryWrapper);
 
