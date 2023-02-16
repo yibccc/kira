@@ -11,5 +11,4 @@ import lombok.Data;
 public class PaiBanDto extends PaiBan {
     private String employeeName;
     private String jobName;
-    private String week;
 }

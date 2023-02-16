@@ -9,6 +9,7 @@ import com.kira.dto.PaiBanDto;
 import com.kira.service.IEmployeeService;
 import com.kira.service.IJobService;
 import com.kira.service.IPaiBanService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,18 +38,20 @@ public class PaiBanController {
     @Autowired
     private IJobService jobService;
     //输出排班表（日）
-    @GetMapping("/list/day")
-    private R<Page> printDay(Integer storeId,String date){
+    @GetMapping("/list")
+    private R<Page> printDay(Integer storeId, String date) throws ParseException {
         int pageSize=10000000;
         int page = 1;
+        String dateEnd = getLastDayOfWeek(date);
         //分页构造器
         Page<PaiBan> pageInfo = new Page(page,pageSize);
         Page<PaiBanDto> paiBanDtoPage = new Page<>();
         //条件构造器
         LambdaQueryWrapper<PaiBan> queryWrapper = new LambdaQueryWrapper();
         //过滤条件
+//        getWeekByDate
         queryWrapper.eq(PaiBan::getStoreId, storeId);
-        queryWrapper.eq(PaiBan::getDate,date);
+        queryWrapper.between(PaiBan::getDate,date,dateEnd);
         //查询操作
         paiBanService.page(pageInfo, queryWrapper);
 
@@ -72,7 +74,6 @@ public class PaiBanController {
             Employee employee = employeeService.getById(employeeId);
             String employeeName = employee.getName();
             paiBanDto.setEmployeeName(employeeName);
-            paiBanDto.setWeek(date);
             return paiBanDto;
         }).collect(Collectors.toList());
         paiBanDtoPage.setRecords(list);
@@ -85,20 +86,24 @@ public class PaiBanController {
     private R<Page> printWeek(){
         return null;
     }
-    //根据日期判断周几
-    public static Integer dateToWeek(String datetime) {
+    /**
+     * 获取指定日期所在周的周日
+     *
+     * @param date 日期
+     */
+    public static String getLastDayOfWeek(String date) throws ParseException {
+        DateFormat fmt =new SimpleDateFormat("yyyy-MM-dd");
+        Date start = fmt.parse(date);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Integer[] weekDays = {7,1,2,3,4,5,6};
-        Calendar cal = Calendar.getInstance();
-        Date date;
-        try {
-            date = sdf.parse(datetime);
-            cal.setTime(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        return weekDays[w];
+        Calendar c = Calendar.getInstance();
+        c.setTime(start);
+        c.add(Calendar.DATE, 7 - c.get(Calendar.DAY_OF_WEEK) + 1);
+        Date sundayDate = c.getTime();
+        String weekEnd = sdf.format(sundayDate);
+
+        return weekEnd;
     }
+
+
 
 }
