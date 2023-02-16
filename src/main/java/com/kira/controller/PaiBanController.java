@@ -47,12 +47,9 @@ public class PaiBanController {
         //条件构造器
         LambdaQueryWrapper<PaiBan> queryWrapper = new LambdaQueryWrapper();
         //过滤条件
-        if (null == selectJobId){
         queryWrapper.eq(PaiBan::getStoreId, storeId);
         queryWrapper.between(PaiBan::getDate,date,dateEnd);
-        }else {
-            queryWrapper.eq(PaiBan::getStoreId, storeId);
-            queryWrapper.between(PaiBan::getDate,date,dateEnd);
+        if (null != selectJobId){
             queryWrapper.eq(PaiBan::getJobId,selectJobId);
         }
         //查询操作
