@@ -86,8 +86,9 @@
 					prop="jobId"
 				>
 					<el-select
-							v-model="ruleForm.jobId"
+							v-model="ruleForm.selectJobId"
 							placeholder="请选择职位"
+							clearable
 							class="showByJob"
 					>
 						<el-option v-for="(item,index) in jobList" :key="index" :label="item.name" :value="item.id"></el-option>
@@ -145,7 +146,7 @@
 				count: 0,
 				ruleForm: {
 					storeId: '',
-					jobId:'',
+					selectJobId:'',
 					date: '',
 				},
 				scheduleList: [],
@@ -157,9 +158,9 @@
 					'storeId':[
 						{'required':true,'message':'请选择需查看的门店','trigger':'change'}
 					],
-					'week':[
-						{'required':true,'message':'请选择需查看的周','trigger':'change'}
-					]
+					// 'week':[
+					// 	{'required':true,'message':'请选择需查看的周','trigger':'blur'}
+					// ]
 				}
 			}
 		},
@@ -202,9 +203,10 @@
 					if (valid) {
 						let params = {...this.ruleForm}
 						params.storeId = this.ruleForm.storeId
-						// params.jobId = this.ruleForm.jobId
+						params.selectJobId = this.ruleForm.selectJobId
 						params.date = this.ruleForm.date.toString()
 						sessionStorage.setItem('storeIds', params.storeId)
+						sessionStorage.setItem('selectJobIds', params.selectJobId)
 						sessionStorage.setItem('dates', params.date)
 						console.log(params)
 						getSelectedInfo(params).then(res => {
@@ -218,7 +220,7 @@
 								} else {
 									this.ruleForm = {
 										'storeId': '',
-										'jobId': '',
+										'selectJobId': '',
 										'date': ''
 									}
 								}
@@ -246,7 +248,10 @@
 			initialView: 'dayGridWeek',
 			//初始化本地语言
 			locale: 'zh-cn',
+			//设置时区为本地时区
 			timeZone:'local',
+			//定义日历上方显示全天信息的文本
+			allDayText:'全天',
 			//设置视图区域高度
 			contentHeight: window.screen.height - 290,
 			//初始化顶部工具栏
@@ -261,7 +266,7 @@
 				day: 'numeric',
 				weekday: 'long'
 			},
-			//把右侧today按钮翻译为中文
+			//把按钮翻译为中文
 			buttonText: {
 				week:'周',
 				today: '今天',
@@ -272,32 +277,44 @@
 			editable: true,
 			selectable: true,
 			navLinks:true,
-			minTime : '06:00:00',   //左侧时间从几点开始
-			maxTime : '22:00:00',   //左侧时间从几点结束
+			slotDuration:"00:30",//时间轴以30分钟为一刻度
+			minTime:6,   //左侧时间从几点开始
+			maxTime:22,   //左侧时间从几点结束
+			dragRevertDuration:1000,//设置一秒如果拖拽不成功则回复原状
 			eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
 			//事件点击
 			eventClick: function(info) {
-				var eventObj = info.event;
+				edit(info.event.title,info.event.start,info.event.end)
 			},
 			//日期点击
-			// dateClick: function(info) {
-			// 	alert(info.dateStr);
+			dateClick: function(info) {
+				add(info.dateStr);
 
-			// },
+			},
 			// select: function(info) {
 			// 	alert('selected ' + info.startStr + ' to ' + info.endStr);
 			// },
 
 			// 获取要显示的数据  返回的是json格式
 			// eventSources: ["/paiban/list"],
+			colors:[
+				{color:'#0d6efd'},
+				{color:'#4aec44'},
+				{color:'#ee7470'},
+				{color:'#fda50d'},
+				{color:'#794ee0'},
+				{color:'#0dfd8d'},
+				{color:'#fa4141'},
+			],
 
 			events: function(arg, callback) {
+				//此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
 				var storeIds=sessionStorage.getItem('storeIds')
-				var dates=sessionStorage.getItem('dates')//此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
+				var selectJobIds=sessionStorage.getItem('selectJobIds')
+				var dates=sessionStorage.getItem('dates')
 				$.ajax({
-					url:"/paiban/list?storeId="+storeIds+"&date="+dates,
+					url:"/paiban/list?storeId="+storeIds+"&date="+dates+"&selectJobId="+selectJobIds,
 					type : "GET",
-					//下面的startDate必须用单引号，不能用双引号
 					data: {},
 					cache:false,
 					dataType: "json",
@@ -307,16 +324,14 @@
 						let item=JSON.parse(JSON.stringify(data.data))
 						$.each(item.records,function(i) {
 							val={
-								title: item.records[i].employeeName+'【'+item.records[i].jobName+'】',
+								title: item.records[i].employeeName+'-'+item.records[i].jobName,
 								start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
 								end: item.records[i].date+' '+item.records[i].endTime,
 								color: '#dc4c27',
-								// customRender:true
 							}
-							// item.records[i].date+'T'+item.records[i].startTime+'+00:00'
 							events.push(val)
 						});
-						console.log(events)
+						console.log("events是："+events)
 						callback(events)
 					},
 
@@ -333,11 +348,6 @@
 					});
 				}
 			},
-
-			//配置获取后台数据的url
-			//eventSources: ["url"],
-			// events: function(start,end,timezone,callback){
-			// 	var events=[];
 
 			//静态数据
 			// events: [
@@ -372,6 +382,7 @@
 			// 		"color": "red"
 			// 	}
 			// ],
+
 			// 事件编辑长度时
 			eventResize: info => {
 				showInfo(info.event)
@@ -395,6 +406,14 @@
 		});
 		calendar.render();
 	});
+	function add(today) {
+		open({
+			type:2,
+			title:'增加',
+			maxmin:true,
+
+		})
+	}
 
 </script>
 
