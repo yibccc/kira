@@ -86,6 +86,21 @@ public class PaiBanController {
         paiBanService.updateById(paiBan);
         return R.success("修改成功");
     }
+
+    //delete
+    @DeleteMapping
+    public R<String> deleteByIds(String id){
+        String[] nums = id.split(",");
+        for(int  c=0;c<nums.length;c++) {
+            paiBanService.removeById(nums[c]);
+        }
+        return R.success("删除成功");
+    }
+    //新增
+    @PostMapping
+    public R<PaiBanDto> save(@RequestBody PaiBanDto paiBanDto){
+        return null;
+    }
     /**
      * 获取指定日期所在周的周日
      *
