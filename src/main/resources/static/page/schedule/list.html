@@ -41,6 +41,11 @@
 		.demo-ruleForm{
 			height: 250px;
 		}
+		.addEvent{
+			position: absolute;
+			top:200px;
+			right:20px;
+		}
 		.table{
 			position: absolute;
 			top:250px;
@@ -119,6 +124,51 @@
 					</el-form-item>
 				</div>
 			</el-form>
+			<el-button class="addEvent" @click="DialogVisible=true">新增排班事件</el-button>
+			<el-dialog
+					title="选择员工匹配到当前班次"
+					:visible.sync="DialogVisible"
+					width="30%"
+					:before-close="handleClose"
+			>
+				<el-form
+						ref="addForm"
+						:model="addForm"
+						:inline="false"
+						action="select.php"
+						method="get"
+				>
+					<el-form-item
+							prop="employeeId"
+					>
+						<el-select
+								type="primary"
+								v-model="addForm.employeeId"
+								filterable
+								placeholder="请选择员工"
+								clearable=""
+								class="employeeOption"
+						>
+							<el-option v-for="(item,index) in employeeList" :key="index" :label="item.name" :value="item.id"></el-option>
+						</el-select>
+					</el-form-item>
+					<div class="subBox prefer buildSchedule">
+						<el-form-item>
+							<el-button
+									@click="DialogVisible=false"
+							>
+								取消
+							</el-button>
+							<el-button
+									type="primary"
+									@click="addHandle()"
+							>
+								确定
+							</el-button>
+						</el-form-item>
+					</div>
+				</el-form>
+			</el-dialog>
 
 			<div class="employee_schedule table">
 				<div id="calendar">
@@ -141,16 +191,15 @@
 				employeeList: [],
 				storeList: [],
 				jobList: [],
-				weekWork: [],
-				weeks: [],
-				maxWorkLength: 0,
-				count: 0,
 				ruleForm: {
 					storeId: '',
 					selectJobId:'',
 					date: '',
 				},
-				scheduleList: [],
+				addForm:{
+					employeeId:'',
+				},
+				DialogVisible:false,
 			}
 		},
 		computed: {
@@ -169,6 +218,7 @@
 			this.init()
 			this.getJobsList()
 			this.getStoresList()
+			this.getEmployeesList()
 			this.user = JSON.parse(localStorage.getItem('userInfo')).username
 		},
 		mounted() {},
@@ -195,6 +245,16 @@
 					if (res.code === 1) {
 						this.storeList = res.data
 					} else {
+						this.$message.error(res.msg || '操作失败')
+					}
+				})
+			},
+			//获取员工
+			getEmployeesList(){
+				getEmployeeList().then(res =>{
+					if(res.code === 1){
+						this.employeeList = res.data
+					}else{
 						this.$message.error(res.msg || '操作失败')
 					}
 				})
@@ -235,6 +295,39 @@
 					}
 				})
 			},
+			addHandle(){
+				this.$refs.addForm.validate((valid) => {
+					if (valid) {
+						let params = {...this.addForm}
+						params.employeeId = this.addForm.employeeId
+						sessionStorage.setItem('employeeIds', params.employeeId)
+						getEmployeeList().then(res =>{
+							if(res.code === 1){
+								this.employeeList = res.data
+								for (let i = 0; i < this.employeeList.length; i++) {
+									if(params.employeeId == this.employeeList[i].id){
+										let jobIds=this.employeeList[i].jobId
+										console.log(jobIds)
+										sessionStorage.setItem('jobIds',jobIds)
+										break
+									}
+								}
+							}else{
+								this.$message.error(res.msg || '操作失败')
+							}
+						})
+						this.DialogVisible=false
+					}
+				})
+			},
+			handleClose(done){
+				this.$confirm('确定关闭吗').then(() => {
+					// function(done)，done 用于关闭 Dialog
+					done();
+				}).catch(() => {
+					console.log("点击确定时触发");
+				});
+			},
 			goBack() {
 				window.parent.menuHandle({
 					id: '4',
@@ -253,7 +346,8 @@
 			//设置时区为本地时区
 			timeZone:'local',
 			//定义日历上方显示全天信息的文本
-			allDayText:'全天',
+			allDay:false,
+			// allDayText:'全天',
 			//设置视图区域高度
 			contentHeight: window.screen.height - 290,
 			//初始化顶部工具栏
@@ -300,10 +394,45 @@
 			dateClick: function(info) {
 				add(info.dateStr);
 			},
-
-			// select: function(info) {
-			// 	alert('selected ' + info.startStr + ' to ' + info.endStr);
-			// },
+			//选择区域添加事件
+			select:info => {
+				let starts=dateForm(info.start).split(' ')
+				let ends=dateForm(info.end).split(' ')
+				var storeIds=sessionStorage.getItem('storeIds')
+				if(storeIds != null){
+					let totalTime=info.end-info.start
+					if(totalTime>14400000 || totalTime<3600000){
+						alert('一个班次的时长限制为1小时-4小时')
+						calendar.refetchEvents()
+					}else{
+						var message=confirm('是否确认将该员工添加入此班次？')
+						if(message == true){
+							var employeeIds=sessionStorage.getItem('employeeIds')
+							var jobIds=sessionStorage.getItem('jobIds')
+							info={storeId:storeIds,employeeId:employeeIds,jobId:jobIds,date:starts[0],startTime:starts[1],endTime:ends[1]}
+							console.log(info)
+							$.ajax({
+								url:'/paiban',
+								method:'POST',
+								data:JSON.stringify(info),
+								dataType:'json',
+								contentType: "application/json",
+								success:function(data){
+									calendar.addEvent({
+										title:data.employeeName,
+										start:starts,
+										end:ends,
+									})
+								}
+							})
+							calendar.refetchEvents()
+						}
+					}
+				}else{
+					alert('请选择门店后再添加')
+					calendar.refetchEvents()
+				}
+			},
 
 			// 获取要显示的数据  返回的是json格式
 			// eventSources: ["/paiban/list"],
