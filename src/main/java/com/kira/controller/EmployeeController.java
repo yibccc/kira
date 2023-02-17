@@ -136,4 +136,15 @@ public class EmployeeController {
         Employee employee = employeeService.getById(id);
         return R.success(employee);
     }
+
+    //用户列表
+    @GetMapping("/list")
+    public R<List<Employee>> list(){
+        //条件构造器
+        LambdaQueryWrapper<Employee> queryWrapper= new LambdaQueryWrapper<>();
+        //过滤条件
+
+        List<Employee> list = employeeService.list(queryWrapper);
+        return R.success(list);
+    }
 }
