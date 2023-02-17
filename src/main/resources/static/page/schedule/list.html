@@ -41,14 +41,38 @@
 		.demo-ruleForm{
 			height: 250px;
 		}
+		.demo-ruleForm .el-form-item {
+			display: inline-block !important;
+		}
+		.demo-ruleForm .el-form-item__content {
+			margin-left: 3px !important;
+			margin-right: 3px !important;
+		}
+		.buildSchedule{
+			position: absolute;
+			top:30px;
+			right:70px;
+		}
+		.notice{
+			position:absolute;
+			top:90px;
+			left:10px;
+			color: #818184;
+			font-size: 14px;
+		}
 		.addEvent{
 			position: absolute;
-			top:200px;
-			right:20px;
+			top:120px;
+			left:60px;
+			color: #76797f;
+		}
+		.addEvent:hover{
+			border: 1px solid #373839;
+			color: #818387;
 		}
 		.table{
 			position: absolute;
-			top:250px;
+			top:150px;
 			left:1px;
 			width: 100%;
 			table-layout: fixed;
@@ -72,7 +96,6 @@
 					method="get"
 			>
 				<el-form-item
-					label="请选择门店："
 					prop="storeId"
 				>
 					<el-select
@@ -88,7 +111,6 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item
-					label="请选择职位："
 					prop="jobId"
 				>
 					<el-select
@@ -124,12 +146,14 @@
 					</el-form-item>
 				</div>
 			</el-form>
+			<p class="notice">*若需新增排班事件，请选择需添加的员工：</p>
 			<el-button class="addEvent" @click="DialogVisible=true">新增排班事件</el-button>
 			<el-dialog
 					title="选择员工匹配到当前班次"
 					:visible.sync="DialogVisible"
 					width="30%"
 					:before-close="handleClose"
+					:modal-append-to-body="false"
 			>
 				<el-form
 						ref="addForm"
@@ -152,7 +176,7 @@
 							<el-option v-for="(item,index) in employeeList" :key="index" :label="item.name" :value="item.id"></el-option>
 						</el-select>
 					</el-form-item>
-					<div class="subBox prefer buildSchedule">
+					<div class="subBox prefer">
 						<el-form-item>
 							<el-button
 									@click="DialogVisible=false"
@@ -317,6 +341,7 @@
 							}
 						})
 						this.DialogVisible=false
+						alert('选择员工成功，接下来请选择需安排的班次')
 					}
 				})
 			},
@@ -373,8 +398,8 @@
 			editable: true,
 			selectable: true,
 			navLinks:true,
-			minTime:6,   //左侧时间从几点开始
-			maxTime:22,   //左侧时间从几点结束
+			minTime:'06:00:00',   //左侧时间从几点开始
+			maxTime:'22:00:00',   //左侧时间从几点结束
 			dragRevertDuration:1000,//设置一秒如果拖拽不成功则回复原状
 			eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
 
@@ -391,9 +416,10 @@
 				}
 			},
 			//日期点击
-			dateClick: function(info) {
-				add(info.dateStr);
-			},
+			// dateClick: function(info) {
+			// 	add(info.dateStr);
+			// },
+
 			//选择区域添加事件
 			select:info => {
 				let starts=dateForm(info.start).split(' ')
@@ -435,17 +461,6 @@
 			},
 
 			// 获取要显示的数据  返回的是json格式
-			// eventSources: ["/paiban/list"],
-			// colors:[
-			// 	{color:'#0d6efd'},
-			// 	{color:'#4aec44'},
-			// 	{color:'#ee7470'},
-			// 	{color:'#fda50d'},
-			// 	{color:'#794ee0'},
-			// 	{color:'#0dfd8d'},
-			// 	{color:'#fa4141'},
-			// ],
-
 			events: function(arg, callback) {
 				//此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
 				var storeIds=sessionStorage.getItem('storeIds')
@@ -467,7 +482,7 @@
 								title: item.records[i].employeeName+'-'+item.records[i].jobName,
 								start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
 								end: item.records[i].date+' '+item.records[i].endTime,
-								color: '#0d6efd',
+								color: Color(),
 							}
 							events.push(val)
 						});
@@ -476,17 +491,6 @@
 					},
 
 				});
-			},
-			eventRender: function(info) {
-				if(info.customRender=true){
-					console.log('info.extendedProps.description')
-					var tooltip = new Tooltip(info.el, {
-						title: info.event.extendedProps.description,
-						placement: 'top',
-						trigger: 'hover',
-						container: 'body'
-					});
-				}
 			},
 
 			// 事件编辑长度时
@@ -541,6 +545,13 @@
 		let minute=date.getMinutes()
 		let second=date.getSeconds()
 		return year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second
+	}
+	//颜色对象
+	function Color(){
+		this.r = Math.floor(Math.random()*255);
+		this.g = Math.floor(Math.random()*255);
+		this.b = Math.floor(Math.random()*255);
+		return this.color = 'rgba('+ this.r +','+ this.g +','+ this.b +',0.8)';
 	}
 
 </script>
