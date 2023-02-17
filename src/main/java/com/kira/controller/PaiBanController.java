@@ -13,9 +13,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -37,7 +35,7 @@ public class PaiBanController {
     private IEmployeeService employeeService;
     @Autowired
     private IJobService jobService;
-    //输出排班表（日）
+    //输出排班表
     @GetMapping("/list")
     private R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
         String dateEnd = getLastDayOfWeek(date);
@@ -81,10 +79,12 @@ public class PaiBanController {
         return R.success(paiBanDtoPage);
 
     }
-    //输出排班表（周）
-    @GetMapping("/list/week")
-    private R<Page> printWeek(){
-        return null;
+
+    //修改排班
+    @PutMapping
+    public R<String> update(@RequestBody PaiBan paiBan){
+        paiBanService.updateById(paiBan);
+        return R.success("修改成功");
     }
     /**
      * 获取指定日期所在周的周日
@@ -100,7 +100,6 @@ public class PaiBanController {
         c.add(Calendar.DATE, 7 - c.get(Calendar.DAY_OF_WEEK) + 1);
         Date sundayDate = c.getTime();
         String weekEnd = sdf.format(sundayDate);
-
         return weekEnd;
     }
 
