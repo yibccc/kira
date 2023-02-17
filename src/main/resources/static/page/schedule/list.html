@@ -283,9 +283,18 @@
 			maxTime:22,   //左侧时间从几点结束
 			dragRevertDuration:1000,//设置一秒如果拖拽不成功则回复原状
 			eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
-			//事件点击
-			eventClick: function(info) {
-				edit()
+
+			//事件点击——删除事件
+			eventClick: info => {
+				var message=confirm('确认删除该员工的排班事件？')
+				console.log(info.event.id)
+				if(message==true){
+					$.ajax({
+						url:'/paiban?id='+info.event.id,
+						type:'delete',
+					})
+					calendar.refetchEvents()
+				}
 			},
 			//日期点击
 			dateClick: function(info) {
@@ -353,24 +362,36 @@
 
 			// 事件编辑长度时
 			eventResize: info => {
-				showInfo(info.event)
-				// info.event.start  // 事件开始时间
-				// info.event.end    // 事件结束时间
+				let totalTime=info.event.end-info.event.start
+				if(totalTime>14400000 || totalTime<3600000){
+					alert('一个班次的时长限制为1小时-4小时')
+					info.revert()
+				}else{
+					let start=dateForm(info.event.start).split(' ')
+					let end=dateForm(info.event.end).split(' ')
+					info={id:info.event.id,date:start[0],startTime:start[1],endTime:end[1]}
+					$.ajax({
+						url:'/paiban',
+						type:'PUT',
+						data:JSON.stringify(info),
+						dataType:'json',
+						contentType: "application/json"
+					})
+				}
 			},
 
 			// 事件拖动时
 			eventDrop: info => {
-				let id=info.event.id
 				let start=dateForm(info.event.start).split(' ')
 				let end=dateForm(info.event.end).split(' ')
-				console.log(start)
-				console.log(end)
-				let date=start[0]
-				let startTime=start[1]
-				let endTime=end[1]
+				info={id:info.event.id,date:start[0],startTime:start[1],endTime:end[1]}
+				console.log(info)
 				$.ajax({
-					url:'/paiban?id='+id+'&date='+date+'&startTime='+startTime+'&endTime='+endTime,
+					url:'/paiban',
 					type:'PUT',
+					data:JSON.stringify(info),
+					dataType:'json',
+					contentType: "application/json"
 				})
 			},
 			//对于返回的数据，如果需要重新组织内容，则使用事件数据转换方法
@@ -394,5 +415,4 @@
 	}
 
 </script>
-
 </html>

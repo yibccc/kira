@@ -15,13 +15,7 @@ function getStoreList(params){
         params
     })
 }
-function getEmployeeList(params){
-    return $axios({
-        url:'/employees/page',
-        method:'get',
-        params
-    })
-}
+
 function getSelectedInfo(params){
     return $axios({
         url:'/paiban/list',
