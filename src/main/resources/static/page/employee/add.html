@@ -244,7 +244,7 @@
                         console.log(res)
                         if(String(res.code) === '1'){
                             this.ruleForm = {...res.data}
-                            let strCheckWorkday =this.ruleForm.checkWorkday.split(',')
+                            let strCheckWorkday =(this.ruleForm.checkWorkday || '').split(',')
                             this.checkedWorkday = strCheckWorkday.map(Number)
                             console.log(this.checkedWorkday)
                         }else{

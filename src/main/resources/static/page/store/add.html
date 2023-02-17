@@ -267,28 +267,28 @@
             computed:{
                 rules(){
                     const validateEachManageArea = (rule,value,callback) => {
-                        if (value.match(/^-?\d+$/)) {
+                        if (/^-?\d+$/.test(value) || value=='') {
                             callback()
                         } else {
                             callback(new Error('请输入整数！'))
                         }
                     }
                     const validateEachServe = (rule,value,callback) => {
-                        if (value.match(/^\d+(?=\.{0,1}\d+$|$)/)) {
+                        if (/^\d+(?=\.{0,1}\d+$|$)/.test(value) || value=='') {
                             callback()
                         } else {
                             callback(new Error('请输入数字！'))
                         }
                     }
                     const validateEachCleanArea = (rule,value,callback) => {
-                        if (value.match(/^-?\d+$/)) {
+                        if (/^-?\d+$/.test(value) || value=='') {
                             callback()
                         } else {
                             callback(new Error('请输入整数！'))
                         }
                     }
                     const validateDutyNum = (rule,value,callback) => {
-                        if (value.match(/^-?\d+$/)) {
+                        if (/^-?\d+$/.test(value) || value=='') {
                             callback()
                         } else {
                             callback(new Error('请输入整数！'))
