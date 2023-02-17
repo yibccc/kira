@@ -98,8 +98,9 @@ public class PaiBanController {
     }
     //新增
     @PostMapping
-    public R<PaiBanDto> save(@RequestBody PaiBanDto paiBanDto){
-        return null;
+    public R<String> save(@RequestBody PaiBan paiBan){
+        paiBanService.save(paiBan);
+        return R.success("添加成功");
     }
     /**
      * 获取指定日期所在周的周日
