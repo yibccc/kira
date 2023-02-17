@@ -279,17 +279,13 @@
 			editable: true,
 			selectable: true,
 			navLinks:true,
-			// isRefetch:true,
-			// lazyFetching:true,
-			slotDuration:"00:30",//时间轴以30分钟为一刻度
-			scrollTime:'06:00:00',
 			minTime:6,   //左侧时间从几点开始
 			maxTime:22,   //左侧时间从几点结束
 			dragRevertDuration:1000,//设置一秒如果拖拽不成功则回复原状
 			eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
 			//事件点击
 			eventClick: function(info) {
-				edit(info.event.title,info.event.start,info.event.end)
+				edit()
 			},
 			//日期点击
 			dateClick: function(info) {
@@ -302,15 +298,15 @@
 
 			// 获取要显示的数据  返回的是json格式
 			// eventSources: ["/paiban/list"],
-			colors:[
-				{color:'#0d6efd'},
-				{color:'#4aec44'},
-				{color:'#ee7470'},
-				{color:'#fda50d'},
-				{color:'#794ee0'},
-				{color:'#0dfd8d'},
-				{color:'#fa4141'},
-			],
+			// colors:[
+			// 	{color:'#0d6efd'},
+			// 	{color:'#4aec44'},
+			// 	{color:'#ee7470'},
+			// 	{color:'#fda50d'},
+			// 	{color:'#794ee0'},
+			// 	{color:'#0dfd8d'},
+			// 	{color:'#fa4141'},
+			// ],
 
 			events: function(arg, callback) {
 				//此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
@@ -329,10 +325,11 @@
 						let item=JSON.parse(JSON.stringify(data.data))
 						$.each(item.records,function(i) {
 							val={
+								id:item.records[i].id,//存放排班id
 								title: item.records[i].employeeName+'-'+item.records[i].jobName,
 								start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
 								end: item.records[i].date+' '+item.records[i].endTime,
-								color: this.colors,
+								color: '#0d6efd',
 							}
 							events.push(val)
 						});
@@ -354,40 +351,6 @@
 				}
 			},
 
-			//静态数据
-			// events: [
-			// 	{
-			// 		title: "工作计划",
-			// 		start: "2023-02-13T08:00:00+08:00",
-			// 		end:"2023-02-13T10:00:00+08:00",
-			// 		color: "green"
-			// 	},
-			// 	{
-			// 		title: "技术评估",
-			// 		start: "2023-03-16",
-			// 		end: "2021-03-06"
-			// 	},
-			// 	{
-			// 		"title": "开会",
-			// 		"start": "2023-02-13T08:00:00",
-			// 		"end": "2023-02-13T10:00:00"
-			// 	},
-			// 	{
-			// 		"title": "做作业",
-			// 		"start": "2023-02-14 08:00:00",
-			// 		"end": "2023-02-14 10:00:00"
-			// 	},
-			// 	{
-			// 		"title": "午饭时间",
-			// 		"start": "2023-03-16T12:00:00+00:00"
-			// 	},
-			// 	{
-			// 		"title": "客户回访",
-			// 		"start": "2023-03-18T07:00:00+00:00",
-			// 		"color": "red"
-			// 	}
-			// ],
-
 			// 事件编辑长度时
 			eventResize: info => {
 				showInfo(info.event)
@@ -397,9 +360,18 @@
 
 			// 事件拖动时
 			eventDrop: info => {
-				showInfo(info.event)
-				// info.event.start  // 事件开始时间
-				// info.event.end    // 事件结束时间
+				let id=info.event.id
+				let start=dateForm(info.event.start).split(' ')
+				let end=dateForm(info.event.end).split(' ')
+				console.log(start)
+				console.log(end)
+				let date=start[0]
+				let startTime=start[1]
+				let endTime=end[1]
+				$.ajax({
+					url:'/paiban?id='+id+'&date='+date+'&startTime='+startTime+'&endTime='+endTime,
+					type:'PUT',
+				})
 			},
 			//对于返回的数据，如果需要重新组织内容，则使用事件数据转换方法
 			eventDataTransform: function(data) {
@@ -411,13 +383,14 @@
 		});
 		calendar.render();
 	});
-	function add(today) {
-		open({
-			type:2,
-			title:'增加',
-			maxmin:true,
-
-		})
+	function dateForm(date) {
+		let year=date.getFullYear()
+		let month=date.getMonth()+1
+		let day=date.getDate()
+		let hour=date.getHours()
+		let minute=date.getMinutes()
+		let second=date.getSeconds()
+		return year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second
 	}
 
 </script>
