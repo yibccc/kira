@@ -2,6 +2,7 @@ package com.kira.controller.utils;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -13,12 +13,15 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -35,13 +38,28 @@ public class PaiBanController {
     private IEmployeeService employeeService;
     @Autowired
     private IJobService jobService;
+    @Autowired
+    private RedisTemplate redisTemplate;
     //输出排班表
     @GetMapping("/list")
-    private R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
+//    @Cacheable(value = "dateCache",key = "#date")
+    public R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
+        String key = "date_"+date;//key
         String dateEnd = getLastDayOfWeek(date);
+
         //分页构造器
         Page<PaiBan> pageInfo = new Page();
         Page<PaiBanDto> paiBanDtoPage = new Page<>();
+
+//        //从redis获取数据
+//        paiBanDtoPage = (Page<PaiBanDto>) redisTemplate.opsForValue().get(key);
+
+//        if (null != paiBanDtoPage){
+//            //存在则返回
+//            return R.success(paiBanDtoPage);
+//        }
+//        //不存在则查询数据库并缓存到Redis
+
         //条件构造器
         LambdaQueryWrapper<PaiBan> queryWrapper = new LambdaQueryWrapper();
         //过滤条件
@@ -75,6 +93,9 @@ public class PaiBanController {
             return paiBanDto;
         }).collect(Collectors.toList());
         paiBanDtoPage.setRecords(list);
+
+//        //缓存
+//        redisTemplate.opsForValue().set(key,paiBanDtoPage,60, TimeUnit.HOURS);
 
         return R.success(paiBanDtoPage);
 

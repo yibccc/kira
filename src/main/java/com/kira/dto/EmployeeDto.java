@@ -17,5 +17,4 @@ public class EmployeeDto extends Employee {
 
     private String storeName;
 
-
 }

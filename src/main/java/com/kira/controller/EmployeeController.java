@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -139,10 +140,11 @@ public class EmployeeController {
 
     //用户列表
     @GetMapping("/list")
-    public R<List<Employee>> list(){
+    @Cacheable(value = "dateCache",key = "#date")
+    public R<List<Employee>> list(String date,String startTime,String endTime){
         //条件构造器
         LambdaQueryWrapper<Employee> queryWrapper= new LambdaQueryWrapper<>();
-        //过滤条件
+        //过滤条件 1.不能连续工作4小时，2不能一天工作8小时，3.一周不能工作超过40小时。
 
         List<Employee> list = employeeService.list(queryWrapper);
         return R.success(list);

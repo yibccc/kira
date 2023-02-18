@@ -3,12 +3,14 @@ package com.kira.dto;
 import com.kira.domain.PaiBan;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author Kira
  * @create 2023-02-12 16:29
  */
 @Data
-public class PaiBanDto extends PaiBan {
+public class PaiBanDto extends PaiBan{
     private String employeeName;
     private String jobName;
 }
