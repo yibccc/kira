@@ -100,6 +100,7 @@
                                 :visible.sync="pwdDialogVisible"
                                 width="30%"
                                 :before-close="handleClose"
+                                :modal-append-to-body="false"
                             >
                                 <div class="form">
                                     <el-form ref="pwdForm" :model="pwdForm" :rules="pwdRules">
@@ -128,6 +129,7 @@
                                 :visible.sync="userDialogVisible"
                                 width="30%"
                                 :before-close="handleClose"
+                                :modal-append-to-body="false"
                             >
                                 <div class="deleteUser">确认是否注销该用户？</div>
                                 <div class="subBox">

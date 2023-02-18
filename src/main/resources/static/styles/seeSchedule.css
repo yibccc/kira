@@ -1,0 +1,89 @@
+.right-menu {
+    position: absolute;
+    top:1px;
+    right:11px;
+    margin-right: 34px;
+    line-height: 64px;
+    color: #333333;
+    font-size: 14px;
+}
+
+.right-menu .logout {
+    margin-left: 20px;
+    width: 28px;
+    font-size: 14px;
+    color: #155fe7;
+    cursor: pointer;
+}
+
+.right-menu img {
+    float:right;
+    margin-top: 20px;
+    margin-left: 10px;
+    width: 25px;
+    height: 25px;
+}
+.right-menu .outLogin {
+    cursor: pointer;
+}
+.right-menu:focus {
+    outline: none;
+}
+.right-menu .right-menu-item {
+    display: inline-block;
+    padding: 0 8px;
+    height: 100%;
+    font-size: 18px;
+    color: #5a5e66;
+    vertical-align: text-bottom;
+}
+.right-menu .right-menu-item.hover-effect {
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.right-menu .right-menu-item.hover-effect:hover {
+    background: rgba(0, 0, 0, 0.025);
+}
+.right-menu .avatar-container {
+    margin-right: 30px;
+}
+.right-menu .avatar-container .avatar-wrapper {
+    margin-top: 5px;
+    position: relative;
+}
+.right-menu .avatar-container .avatar-wrapper .user-avatar {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+}
+.right-menu .avatar-container .avatar-wrapper .el-icon-caret-bottom {
+    cursor: pointer;
+    position: absolute;
+    right: -20px;
+    top: 25px;
+    font-size: 12px;
+}
+.demo-ruleForm{
+    height: 250px;
+}
+.demo-ruleForm .el-form-item {
+    display: inline-block !important;
+}
+.demo-ruleForm .el-form-item__content {
+    margin-left: 3px !important;
+    margin-right: 3px !important;
+}
+.buildSchedule{
+    position: absolute;
+    top:30px;
+    right:280px;
+}
+.table{
+    position: absolute;
+    top:150px;
+    left:1px;
+    width: 100%;
+    table-layout: fixed;
+    text-align: center;
+}

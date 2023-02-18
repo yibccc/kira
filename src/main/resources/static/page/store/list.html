@@ -87,7 +87,6 @@
                                 size="small"
                                 class="greenBug non"
                                 @click.native="showRule(scope.row)"
-                                :class="{notAdmin:user !== 'admin'}"
                         >
                             查看规则
                         </el-button>
@@ -125,7 +124,6 @@
                             size="small"
                             class="blueBug"
                             @click="addStoreHandle(scope.row.id)"
-                            :class="{notAdmin:user !== 'admin'}"
                         >
                             编辑
                         </el-button>
@@ -134,7 +132,6 @@
                             size="small"
                             class="delBut non"
                             @click="deleteStoreHandle('单删',scope.row.id)"
-                            :class="{notAdmin:user !== 'admin'}"
                         >
                             删除
                         </el-button>
