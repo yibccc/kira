@@ -15,6 +15,14 @@ function getStoreList(params){
         params
     })
 }
+//获取员工列表
+function getEmployeeList(params){
+    return $axios({
+        url:'/employees/list',
+        method:'get',
+        params
+    })
+}
 
 function getSelectedInfo(params){
     return $axios({

@@ -1,31 +1,40 @@
-.storedropdown{
+.demo-ruleForm{
+    height: 250px;
+}
+.demo-ruleForm .el-form-item {
+    display: inline-block !important;
+}
+.demo-ruleForm .el-form-item__content {
+    margin-left: 3px !important;
+    margin-right: 3px !important;
+}
+.buildSchedule{
+    position: absolute;
+    top:30px;
+    right:70px;
+}
+.notice{
     position:absolute;
+    top:90px;
+    left:10px;
+    color: #818184;
+    font-size: 14px;
 }
-.dropdown{
-    position: relative;;
-    left: 450px;
-    text-align: left;
+.addEvent{
+    position: absolute;
+    top:120px;
+    left:60px;
+    color: #76797f;
 }
-.el-select,
-.el-input,
-.el-input__inner {
-    background-color: rgba(255, 255, 255, 0.07);
-    color: rgba(255, 255, 255, 0.50);
-    /* border: none; */
-    border-color: #000;
-    text-align: left;
-    border-radius: 4px;
+.addEvent:hover{
+    border: 1px solid #373839;
+    color: #818387;
 }
-.el-input__inner:hover{
-    background-color: #586987;
-}
-.el-select .el-input .el-select__caret {
-    color: #000;
-}
-.el-select .el-input .el-select__caret:hover{
-    color:#586987;
-}
-.el-select-dropdown__item.selected span{
-    color: rgba(255, 255, 255, 0.80) !important;
-    z-index: 9999;
+.table{
+    position: absolute;
+    top:150px;
+    left:1px;
+    width: 100%;
+    table-layout: fixed;
+    text-align: center;
 }
