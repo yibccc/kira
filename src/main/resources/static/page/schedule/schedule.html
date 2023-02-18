@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--	<meta http-equiv="refresh" content="5">设置页面5秒自动刷新-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能排班系统</title>
+    <link rel="stylesheet" href="../../plugins/element-ui/index.css">
+    <link rel="stylesheet" href="../../styles/common.css">
+    <link rel="stylesheet" href="../../styles/page.css">
+    <link rel="stylesheet" href="../../styles/seeSchedule.css">
+    <link rel="stylesheet" href="../../styles/schedule1.css">
+    <link rel="stylesheet" href="../../styles/schedule2.css">
+    <link rel="stylesheet" href="../../styles/schedule3.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.2.3/axios.js"></script>
+    <script src="../../plugins/vue/vue.js"></script>
+    <script src="../../plugins/element-ui/index.js"></script>
+    <script src="../../plugins/axios/axios.min.js"></script>
+    <script src="../../js/request.js"></script>
+    <script src="../../api/employee.js"></script>
+    <script src="../../api/schedule.js"></script>
+    <script src="../../js/min.js"></script>
+    <script src="../../js/demo-to-codepen.js"></script>
+    <script src="../../js/index.global.js"></script>
+    <script src="../../js/jquery-3.5.1.min.js"></script>
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+            font-size: 14px;
+        }
+        #calendar {
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+        #employee-app .notAdmin::after{
+            border:0 !important;
+        }
+        .dropdown{
+            align-items: center;
+            width: 100px;
+            height: 100%;
+        }
+        .el-dropdown-link{
+            float:right;
+            color:#626060;
+            font-size: 17px;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container" id="schedule-app">
+    <div class="container">
+        <div class="right-menu">
+            <el-dropdown class="dropdown">
+                <div class="avatar-wrapper el-dropdown-link">{{ userInfo.name }}<i class="el-icon-arrow-down el-icon--right"></i></div>
+                <el-dropdown-menu slot="dropdown" class="dropdownitem" style="white-space: nowrap;">
+                    <el-dropdown-item @click.native="pwdDialogVisible=true">修改密码</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
+            <el-dialog
+                    title="修改密码"
+                    :visible.sync="pwdDialogVisible"
+                    width="30%"
+                    :before-close="handleClose"
+                    :modal-append-to-body="false"
+            >
+                <div class="form">
+                    <el-form ref="pwdForm" :model="pwdForm" :rules="pwdRules">
+                        <el-form-item prop="newPassword" label="请输入新密码">
+                            <el-input v-model="pwdForm.newPassword" type="password" placeholder="请输入6-16位密码" maxlength="16"></el-input>
+                        </el-form-item>
+                        <el-form-item prop="confirmPassword" label="确认新密码">
+                            <el-input v-model="pwdForm.confirmPassword" type="password" placeholder="请再次输入新密码" maxlength="16"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <div class="subBox">
+                    <el-button @click="pwdDialogVisible=false">
+                        取消
+                    </el-button>
+                    <el-button
+                            type="primary"
+                            @click="pwdHandle()"
+                    >
+                        提交
+                    </el-button>
+                </div>
+            </el-dialog>
+            <!-- <div class="avatar-wrapper">{{userInfo.name}}</div> -->
+            <img src="../../images/icons/tuichu.png" class="outLogin" alt="退出" @click="logout" />
+        </div>
+        <div class="tableBar">
+            <el-form
+                    ref="ruleForm"
+                    :model="ruleForm"
+                    :inline="false"
+                    :rules="rules"
+                    label-width="180px"
+                    class="demo-ruleForm"
+                    action="select.php"
+                    method="get"
+            >
+                <el-form-item
+                        prop="storeId"
+                >
+                    <el-select
+                            type="primary"
+                            v-model="ruleForm.storeId"
+                            filterable
+                            placeholder="请选择门店"
+                            clearable=""
+                            class="storeOption"
+                    >
+                        <el-option v-for="(item,index) in storeList" :key="index" :label="item.name" :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                        prop="jobId"
+                >
+                    <el-select
+                            v-model="ruleForm.selectJobId"
+                            placeholder="请选择职位"
+                            clearable
+                            class="showByJob"
+                    >
+                        <el-option v-for="(item,index) in jobList" :key="index" :label="item.name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item
+                        prop="week"
+                >
+                    <el-date-picker
+                            v-model="ruleForm.date"
+                            type="week"
+                            value-format="yyyy-MM-dd"
+                            format="yyyy 第 WW 周"
+                            placeholder="选择周"
+                            class="specificTime"
+                    >
+                    </el-date-picker>
+                </el-form-item>
+                <div class="subBox prefer buildSchedule">
+                    <el-form-item>
+                        <el-button
+                                type="primary"
+                                @click="submitForm('ruleForm')"
+                        >
+                            生成排班表
+                        </el-button>
+                    </el-form-item>
+                </div>
+            </el-form>
+
+            <div class="employee_schedule table">
+                <div id="calendar">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    new Vue({
+        el: '#schedule-app',
+        data() {
+            return {
+                page: 1,
+                pageSize: 10,
+                counts: 0,
+                userInfo:{},
+                pwdDialogVisible:false,
+                tableData: [],
+                storeList: [],
+                jobList: [],
+                pwdForm:{
+                    newPassword:'',
+                    confirmPassword:''
+                },
+                ruleForm: {
+                    storeId: '',
+                    selectJobId:'',
+                    date: '',
+                },
+            }
+        },
+        computed: {
+            rules(){
+                return{
+                    'storeId':[
+                        {'required':true,'message':'请选择需查看的门店','trigger':'change'}
+                    ],
+                }
+            },
+            pwdRules(){
+                const validateNewPassword = (rule, value, callback) => {
+                    if (value.length < 6 || value.length >16) {
+                        callback(new Error('密码长度必须在6-16位'))
+                    }else{
+                        if(this.pwdForm.confirmPassword !== ''){
+                            this.$refs.pwdForm.validateField('confirmPassword')
+                        }
+                        callback()
+                    }
+                }
+                const validateConfirmPassword = (rule,value,callback)=>{
+                    if(value.length < 1){
+                        callback(new Error('重复密码不能为空！'));
+                    }else if(value != this.pwdForm.newPassword){
+                        callback(new Error('两次输入密码不一致！'));
+                    }else{
+                        callback()
+                    }
+                }
+                return {
+                    newPassword: [{ validator: validateNewPassword, trigger: 'blur' }],
+                    confirmPassword: [{ validator: validateConfirmPassword, trigger: 'blur' }],
+                }
+            }
+        },
+        created() {
+            this.init()
+            this.getJobsList()
+            this.getStoresList()
+            // this.user = JSON.parse(localStorage.getItem('userInfo')).username
+            const userInfo = window.localStorage.getItem('userInfo')
+            // const id = window.localStorage.getItem('id')
+            console.log(userInfo);
+            // console.log(userInfo[6]);
+            if (userInfo) {
+                this.userInfo = JSON.parse(userInfo)
+                // console.log(userInfo)
+                console.log(this.userInfo.id);
+            }
+        },
+        mounted() {},
+        methods: {
+            async init() {
+                const params = {
+                    page: 1,
+                    pageSize: 10,
+                }
+            },
+            async pwdHandle(params){
+                this.id=this.userInfo.id;
+                this.$refs.pwdForm.validate((valid)=>{
+                    if(valid){
+                        let params = {...this.pwdForm}
+                        params.password=this.pwdForm.newPassword
+                        delete params.updateTime
+                        editPwd({'id':this.id,'password':params.password}).then(res=>{
+                            if(res.code == 1){
+                                this.$message.success('修改密码成功！')
+                                this.pwdDialogVisible = false
+                                // this.handleQuery()
+                            }else{
+                                this.$message.error(res.msg || '修改密码失败')
+                            }
+                        }).catch(err=>{
+                            this.$message.error('请求出错了：'+err)
+                        })
+                    }
+                })
+            },
+            handleClose(done){
+                this.$confirm('确定关闭吗').then(() => {
+                    // function(done)，done 用于关闭 Dialog
+                    done();
+                }).catch(() => {
+                    console.log("点击确定时触发");
+                });
+            },
+            logout() {
+                logoutApi().then((res)=>{
+                    if(res.code === 1){
+                        localStorage.removeItem('userInfo')
+                        window.location.href = '../../page/employeeLogin.html'
+                    }
+                })
+            },
+            //获取职位
+            getJobsList() {
+                getJobList().then(res => {
+                    if (res.code === 1) {
+                        this.jobList = res.data
+                    } else {
+                        this.$message.error(res.msg || '操作失败')
+                    }
+                })
+            },
+            //获取门店
+            getStoresList() {
+                getStoreList().then(res => {
+                    if (res.code === 1) {
+                        this.storeList = res.data
+                    } else {
+                        this.$message.error(res.msg || '操作失败')
+                    }
+                })
+            },
+
+            submitForm(formName, st) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let params = {...this.ruleForm}
+                        params.storeId = this.ruleForm.storeId
+                        params.selectJobId = this.ruleForm.selectJobId
+                        params.date = this.ruleForm.date.toString()
+                        sessionStorage.setItem('storeIds', params.storeId)
+                        sessionStorage.setItem('selectJobIds', params.selectJobId)
+                        sessionStorage.setItem('dates', params.date)
+                        console.log(params)
+                        location.reload()
+                        getSelectedInfo(params).then(res => {
+                            if (res.code === 1) {
+                                this.$message.success('确认自动生成排班表')
+                                this.tableData = res.data.records || []
+                                this.counts = res.data.total
+                                console.log(this.tableData)
+                                if (!st) {
+                                    this.goBack()
+                                } else {
+                                    this.ruleForm = {
+                                        'storeId': '',
+                                        'selectJobId': '',
+                                        'date': ''
+                                    }
+                                }
+                            } else {
+                                this.$message.error(res.msg || '操作失败')
+                            }
+                        }).catch(err => {
+                            this.$message.error('请求出错了：' + err)
+                        })
+                    }
+                })
+            },
+        }
+    })
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridWeek',
+            //初始化本地语言
+            locale: 'zh-cn',
+            //设置时区为本地时区
+            timeZone:'local',
+            //定义日历上方显示全天信息的文本
+            allDay:false,
+            // allDayText:'全天',
+            //设置视图区域高度
+            contentHeight: window.screen.height - 290,
+            //初始化顶部工具栏
+            headerToolbar: {
+                left: 'today',
+                center: 'title',
+                right: 'prevYear,prev,timeGridWeek,timeGridDay,next,nextYear'
+            },
+            titleFormat: { // will produce something like "Tuesday, September 18, 2018"
+                month: 'long',
+                year: 'numeric',
+                day: 'numeric',
+                weekday: 'long'
+            },
+            //把按钮翻译为中文
+            buttonText: {
+                week:'周',
+                today: '今天',
+                day:'日',
+            },
+            defaultView:'agendaWeek', //初始化时的默认视图默认显示周
+            firstDay:1,
+            editable: true,
+            selectable: true,
+            navLinks:true,
+            minTime:'06:00:00',   //左侧时间从几点开始
+            maxTime:'22:00:00',   //左侧时间从几点结束
+            dragRevertDuration:1000,//设置一秒如果拖拽不成功则回复原状
+            eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
+
+            //事件点击——删除事件
+            eventClick: info => {
+                alert('你没有权限删除')
+            },
+            //日期点击
+            // dateClick: function(info) {
+            // 	add(info.dateStr);
+            // },
+
+            //选择区域添加事件
+            select:info => {
+                alert('你没有权限添加班次')
+            },
+
+            // 获取要显示的数据  返回的是json格式
+            events: function(arg, callback) {
+                //此处的arg里面的参数也可以参照上面的那个info输出后进行研究，要把参数都明确什么意思
+                var storeIds=sessionStorage.getItem('storeIds')
+                var selectJobIds=sessionStorage.getItem('selectJobIds')
+                var dates=sessionStorage.getItem('dates')
+                $.ajax({
+                    url:"/paiban/list?storeId="+storeIds+"&date="+dates+"&selectJobId="+selectJobIds,
+                    type : "GET",
+                    data: {},
+                    cache:false,
+                    dataType: "json",
+                    success:function(data){
+                        let events = [];
+                        var val={}
+                        let item=JSON.parse(JSON.stringify(data.data))
+                        $.each(item.records,function(i) {
+                            val={
+                                id:item.records[i].id,//存放排班id
+                                title: item.records[i].employeeName+'-'+item.records[i].jobName,
+                                start: item.records[i].date+' '+item.records[i].startTime, // will be parsed
+                                end: item.records[i].date+' '+item.records[i].endTime,
+                                color: Color(),
+                            }
+                            events.push(val)
+                        });
+                        callback(events)
+                    },
+
+                });
+            },
+
+            // 事件编辑长度时
+            eventResize: info => {
+                alert('你没有权限修改班次')
+            },
+
+            // 事件拖动时
+            eventDrop: info => {
+                alert('你没有权限拖动班次')
+            },
+            //对于返回的数据，如果需要重新组织内容，则使用事件数据转换方法
+            // eventDataTransform: function(data) {
+            // 	data.title = data.title ;
+            // 	//  data.display='background';
+            // 	return data;
+            // },
+        });
+        calendar.render();
+    });
+    //颜色对象
+    function Color(){
+        this.r = Math.floor(Math.random()*255);
+        this.g = Math.floor(Math.random()*255);
+        this.b = Math.floor(Math.random()*255);
+        return this.color = 'rgba('+ this.r +','+ this.g +','+ this.b +',0.8)';
+    }
+</script>
+</html>

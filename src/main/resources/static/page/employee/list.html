@@ -92,7 +92,6 @@
                                 size="small"
                                 class="greenBug non"
                                 @click.native="showFlavor(scope.row)"
-                                :class="{notAdmin:user !== 'admin'}"
                         >
                             查看偏好
                         </el-button>
@@ -133,7 +132,6 @@
                             size="small"
                             class="blueBug"
                             @click="addEmployeeHandle(scope.row.id)"
-                            :class="{notAdmin:user !== 'admin'}"
                         >
                             编辑
                         </el-button>
@@ -151,7 +149,6 @@
                             size="small"
                             class="delBut non"
                             @click="deleteEmployeeHandle('单删',scope.row.id)"
-                            :class="{notAdmin:user !== 'admin'}"
                         >
                             删除
                         </el-button>
