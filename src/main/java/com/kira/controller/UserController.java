@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-280:06
  */
 @Slf4j
@@ -56,7 +56,6 @@ public class UserController {
     @PostMapping("/register")
     public R<String> save(@RequestBody User user){
         log.info("新增user，user信息：｛｝",user.toString());
-        //可设置初始值
         userService.save(user);
         return R.success("注册成功");
     }

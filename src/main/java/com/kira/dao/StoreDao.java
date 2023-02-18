@@ -5,7 +5,7 @@ import com.kira.domain.Store;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-2622:12
  */
 @Mapper

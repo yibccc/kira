@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.kira.domain.Employee;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-2715:11
  */
 public interface IEmployeeService extends IService<Employee> {

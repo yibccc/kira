@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-2621:19
  */
 @Mapper

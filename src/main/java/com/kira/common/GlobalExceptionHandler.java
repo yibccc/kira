@@ -12,7 +12,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * 全局异常处理
- * @author shkstart
+ * @author Kira
  * @create 2023-02-0221:27
  */
 @ControllerAdvice(annotations = {RestController.class, Controller.class})
@@ -29,6 +29,12 @@ public class GlobalExceptionHandler {
             return R.error(msg);
         }
         return R.error("未知错误");
+
+    }
+    @ExceptionHandler(CustomException.class)
+    public R<String> exceptionHandler(CustomException ex){
+
+        return R.error(ex.getMessage());
 
     }
 }

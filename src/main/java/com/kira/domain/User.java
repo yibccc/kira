@@ -3,7 +3,7 @@ package com.kira.domain;
 import lombok.Data;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-2723:55
  */
 @Data
