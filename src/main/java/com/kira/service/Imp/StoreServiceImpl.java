@@ -25,7 +25,7 @@ public class StoreServiceImpl extends ServiceImpl<StoreDao, Store> implements IS
         LambdaQueryWrapper<Employee> employeeLambdaQueryWrapper = new LambdaQueryWrapper<>();
 
         employeeLambdaQueryWrapper.eq(Employee::getStoreId,id);
-        int count = employeeService.count();
+        int count = employeeService.count(employeeLambdaQueryWrapper);
 
         if (count > 0){
             throw new CustomException("不可删除，此门店还有员工存在");

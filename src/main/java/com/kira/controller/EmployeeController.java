@@ -40,6 +40,7 @@ public class EmployeeController {
 
     //分页查询
     @GetMapping("/page")
+    @Cacheable(value = "pageEmployeeCache",key = "#page")
     public R<Page> page(int page, int pageSize, String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
         //分页构造器
@@ -81,7 +82,7 @@ public class EmployeeController {
 
     //根据id修改
     @PutMapping
-    @CacheEvict(value = "listEmployeeDate",allEntries = true)
+    @CacheEvict(value = "pageEmployeeCache",allEntries = true)
     public R<String> update(@RequestBody Employee employee){
         log.info(employee.toString());
         employeeService.updateById(employee);
@@ -97,7 +98,7 @@ public class EmployeeController {
 
 //    批量删除
     @DeleteMapping
-    @CacheEvict(value = "listEmployeeDate",allEntries = true)
+    @CacheEvict(value = "pageEmployeeCache",allEntries = true)
     public R<String> deleteByIds(String id){
         String[] nums = id.split(",");
         for(int  c=0;c<nums.length;c++) {
@@ -108,7 +109,7 @@ public class EmployeeController {
 
     //新增
     @PostMapping
-    @CacheEvict(value = "listEmployeeDate",allEntries = true)
+    @CacheEvict(value = "pageEmployeeCache",allEntries = true)
     public R<String> save(@RequestBody Employee employee){
         log.info("新增员工，员工信息：",employee.toString());
 //        if(null == employee.getCheckDuration()){
@@ -148,7 +149,6 @@ public class EmployeeController {
 
     //用户列表
     @GetMapping("/list")
-    @Cacheable(value = "listEmployeeDate",key = "#date")
     public R<List<Employee>> list(String date,String startTime,String endTime){
         //条件构造器
         LambdaQueryWrapper<Employee> queryWrapper= new LambdaQueryWrapper<>();

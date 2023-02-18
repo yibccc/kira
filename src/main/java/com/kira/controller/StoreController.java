@@ -84,7 +84,7 @@ public class StoreController {
     public R<String> deleteByIds(String id){
         String[] nums = id.split(",");
         for(int  c=0;c<nums.length;c++) {
-            storeService.removeById(Integer.parseInt(nums[c]));
+            storeService.remove(Integer.parseInt(nums[c]));
         }
         return R.success("删除成功");
     }
