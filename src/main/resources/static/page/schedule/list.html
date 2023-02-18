@@ -383,7 +383,7 @@
 				let ends=dateForm(info.end).split(' ')
 				var storeIds=sessionStorage.getItem('storeIds')
 				if(storeIds != null){
-					if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true){
+					if(compareTime(starts[1],'6:00:00')==false & compareTime(ends[1],'22:00:00')==true & compareTime(starts[1],'21:00:00')==true){
 						let totalTime=info.end-info.start
 						if(totalTime>14400000 || totalTime<3600000){
 							alert('一个班次的时长限制为1小时-4小时')
@@ -407,9 +407,9 @@
 											start:starts,
 											end:ends,
 										})
+										calendar.refetchEvents()
 									}
 								})
-								calendar.refetchEvents()
 							}
 						}
 					}else{
