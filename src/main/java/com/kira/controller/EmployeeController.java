@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -118,6 +119,9 @@ public class EmployeeController {
         if ("" == employee.getEndTime()){
             employee.setEndTime(null);
         }
+        if ("" == employee.getPassword()){
+            employee.setPassword("123465");
+        }
         employeeService.save(employee);
         return R.success("新增成功");
     }
@@ -140,7 +144,6 @@ public class EmployeeController {
 
     //用户列表
     @GetMapping("/list")
-    @Cacheable(value = "dateCache",key = "#date")
     public R<List<Employee>> list(String date,String startTime,String endTime){
         //条件构造器
         LambdaQueryWrapper<Employee> queryWrapper= new LambdaQueryWrapper<>();
@@ -148,5 +151,34 @@ public class EmployeeController {
 
         List<Employee> list = employeeService.list(queryWrapper);
         return R.success(list);
+    }
+
+    //员工登录
+    @PostMapping("/login")
+    public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee){
+        //login
+        String password = employee.getPassword();
+
+        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Employee::getName,employee.getName());
+        Employee one = employeeService.getOne(queryWrapper);
+
+        if(one == null){
+            return R.error("登录失败");
+        }
+
+        if(!one.getPassword().equals(password)){
+            return R.error("密码错误");
+        }
+
+        request.getSession().setAttribute("user",one.getId());
+        return R.success(one);
+    }
+
+    //login out
+    @PostMapping("/logout")
+    public R<String> loginOut(HttpServletRequest request){
+        request.getSession().removeAttribute("employee");
+        return R.success("退出成功");
     }
 }

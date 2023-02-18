@@ -38,27 +38,16 @@ public class PaiBanController {
     private IEmployeeService employeeService;
     @Autowired
     private IJobService jobService;
-    @Autowired
-    private RedisTemplate redisTemplate;
+
     //输出排班表
     @GetMapping("/list")
-//    @Cacheable(value = "dateCache",key = "#date")
+    @Cacheable(value = "dateCache",key = "#date")
     public R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
-        String key = "date_"+date;//key
         String dateEnd = getLastDayOfWeek(date);
 
         //分页构造器
         Page<PaiBan> pageInfo = new Page();
         Page<PaiBanDto> paiBanDtoPage = new Page<>();
-
-//        //从redis获取数据
-//        paiBanDtoPage = (Page<PaiBanDto>) redisTemplate.opsForValue().get(key);
-
-//        if (null != paiBanDtoPage){
-//            //存在则返回
-//            return R.success(paiBanDtoPage);
-//        }
-//        //不存在则查询数据库并缓存到Redis
 
         //条件构造器
         LambdaQueryWrapper<PaiBan> queryWrapper = new LambdaQueryWrapper();
@@ -94,11 +83,7 @@ public class PaiBanController {
         }).collect(Collectors.toList());
         paiBanDtoPage.setRecords(list);
 
-//        //缓存
-//        redisTemplate.opsForValue().set(key,paiBanDtoPage,60, TimeUnit.HOURS);
-
         return R.success(paiBanDtoPage);
-
     }
 
     //修改排班

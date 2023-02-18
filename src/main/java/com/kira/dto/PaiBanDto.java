@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @create 2023-02-12 16:29
  */
 @Data
-public class PaiBanDto extends PaiBan{
+public class PaiBanDto extends PaiBan implements Serializable{
     private String employeeName;
     private String jobName;
 }
