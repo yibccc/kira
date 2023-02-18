@@ -1,5 +1,6 @@
 package com.kira.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kira.domain.PaiBan;
 
