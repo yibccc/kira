@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="../../plugins/element-ui/index.css">
 	<link rel="stylesheet" href="../../styles/common.css">
 	<link rel="stylesheet" href="../../styles/page.css">
+	<link rel="stylesheet" href="../../styles/schedule.css">
 	<link rel="stylesheet" href="../../styles/schedule1.css">
 	<link rel="stylesheet" href="../../styles/schedule2.css">
 	<link rel="stylesheet" href="../../styles/schedule3.css">
@@ -38,47 +39,6 @@
 		#employee-app .notAdmin::after{
 			border:0 !important;
 		}
-		.demo-ruleForm{
-			height: 250px;
-		}
-		.demo-ruleForm .el-form-item {
-			display: inline-block !important;
-		}
-		.demo-ruleForm .el-form-item__content {
-			margin-left: 3px !important;
-			margin-right: 3px !important;
-		}
-		.buildSchedule{
-			position: absolute;
-			top:30px;
-			right:70px;
-		}
-		.notice{
-			position:absolute;
-			top:90px;
-			left:10px;
-			color: #818184;
-			font-size: 14px;
-		}
-		.addEvent{
-			position: absolute;
-			top:120px;
-			left:60px;
-			color: #76797f;
-		}
-		.addEvent:hover{
-			border: 1px solid #373839;
-			color: #818387;
-		}
-		.table{
-			position: absolute;
-			top:150px;
-			left:1px;
-			width: 100%;
-			table-layout: fixed;
-			text-align: center;
-		}
-
 	</style>
 </head>
 <body>
@@ -232,9 +192,6 @@
 					'storeId':[
 						{'required':true,'message':'请选择需查看的门店','trigger':'change'}
 					],
-					// 'week':[
-					// 	{'required':true,'message':'请选择需查看的周','trigger':'blur'}
-					// ]
 				}
 			}
 		},
@@ -426,33 +383,38 @@
 				let ends=dateForm(info.end).split(' ')
 				var storeIds=sessionStorage.getItem('storeIds')
 				if(storeIds != null){
-					let totalTime=info.end-info.start
-					if(totalTime>14400000 || totalTime<3600000){
-						alert('一个班次的时长限制为1小时-4小时')
-						calendar.refetchEvents()
-					}else{
-						var message=confirm('是否确认将该员工添加入此班次？')
-						if(message == true){
-							var employeeIds=sessionStorage.getItem('employeeIds')
-							var jobIds=sessionStorage.getItem('jobIds')
-							info={storeId:storeIds,employeeId:employeeIds,jobId:jobIds,date:starts[0],startTime:starts[1],endTime:ends[1]}
-							console.log(info)
-							$.ajax({
-								url:'/paiban',
-								method:'POST',
-								data:JSON.stringify(info),
-								dataType:'json',
-								contentType: "application/json",
-								success:function(data){
-									calendar.addEvent({
-										title:data.employeeName,
-										start:starts,
-										end:ends,
-									})
-								}
-							})
+					if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true){
+						let totalTime=info.end-info.start
+						if(totalTime>14400000 || totalTime<3600000){
+							alert('一个班次的时长限制为1小时-4小时')
 							calendar.refetchEvents()
+						}else{
+							var message=confirm('是否确认将该员工添加入此班次？')
+							if(message == true){
+								var employeeIds=sessionStorage.getItem('employeeIds')
+								var jobIds=sessionStorage.getItem('jobIds')
+								info={storeId:storeIds,employeeId:employeeIds,jobId:jobIds,date:starts[0],startTime:starts[1],endTime:ends[1]}
+								console.log(info)
+								$.ajax({
+									url:'/paiban',
+									method:'POST',
+									data:JSON.stringify(info),
+									dataType:'json',
+									contentType: "application/json",
+									success:function(data){
+										calendar.addEvent({
+											title:data.employeeName,
+											start:starts,
+											end:ends,
+										})
+									}
+								})
+								calendar.refetchEvents()
+							}
 						}
+					}else{
+						alert('不得在早上6点以前或晚上10点以后安排班次！')
+						calendar.refetchEvents()
 					}
 				}else{
 					alert('请选择门店后再添加')
@@ -486,7 +448,6 @@
 							}
 							events.push(val)
 						});
-						console.log("events是："+events)
 						callback(events)
 					},
 
@@ -519,24 +480,30 @@
 				let end=dateForm(info.event.end).split(' ')
 				info={id:info.event.id,date:start[0],startTime:start[1],endTime:end[1]}
 				console.log(info)
-				$.ajax({
-					url:'/paiban',
-					type:'PUT',
-					data:JSON.stringify(info),
-					dataType:'json',
-					contentType: "application/json"
-				})
+				if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true){
+					$.ajax({
+						url:'/paiban',
+						type:'PUT',
+						data:JSON.stringify(info),
+						dataType:'json',
+						contentType: "application/json"
+					})
+				}else{
+					alert('不得在早上6点以前或晚上10点以后安排班次！')
+					calendar.refetchEvents()
+				}
+
 			},
 			//对于返回的数据，如果需要重新组织内容，则使用事件数据转换方法
-			eventDataTransform: function(data) {
-				data.title = data.title ;
-				//  data.display='background';
-				return data;
-			},
-
+			// eventDataTransform: function(data) {
+			// 	data.title = data.title ;
+			// 	//  data.display='background';
+			// 	return data;
+			// },
 		});
 		calendar.render();
 	});
+	//时间转换格式
 	function dateForm(date) {
 		let year=date.getFullYear()
 		let month=date.getMonth()+1
@@ -553,6 +520,16 @@
 		this.b = Math.floor(Math.random()*255);
 		return this.color = 'rgba('+ this.r +','+ this.g +','+ this.b +',0.8)';
 	}
-
+	//比较时间大小
+	function compareTime(time1,time2) {
+		var a=time1.split(':')
+		var b=time2.split(':')
+		console.log(a,b)
+		var date=new Date()
+		var a1=date.setHours(a[0],a[1],a[2])
+		var b1=date.setHours(b[0],b[1],b[2])
+		console.log(a1,b1)
+		return a1<b1;
+	}
 </script>
 </html>
