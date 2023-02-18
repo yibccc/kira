@@ -39,6 +39,7 @@ public class EmployeeController {
 
     //分页查询
     @GetMapping("/page")
+    @Cacheable(value = "pageEmployeeCache",key = "#page")
     public R<Page> page(int page, int pageSize, String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
         //分页构造器
@@ -160,7 +161,7 @@ public class EmployeeController {
         String password = employee.getPassword();
 
         LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Employee::getName,employee.getName());
+        queryWrapper.eq(Employee::getEmail,employee.getEmail());
         Employee one = employeeService.getOne(queryWrapper);
 
         if(one == null){
