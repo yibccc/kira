@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +42,7 @@ public class PaiBanController {
 
     //输出排班表
     @GetMapping("/list")
-    @Cacheable(value = "dateCache",key = "#date")
+    @Cacheable(value = "paibanDateCache",key = "#date")
     public R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
         String dateEnd = getLastDayOfWeek(date);
 
@@ -88,6 +89,7 @@ public class PaiBanController {
 
     //修改排班
     @PutMapping
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<String> update(@RequestBody PaiBan paiBan){
         paiBanService.updateById(paiBan);
         return R.success("修改成功");
@@ -95,6 +97,7 @@ public class PaiBanController {
 
     //delete
     @DeleteMapping
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<String> deleteByIds(String id){
         String[] nums = id.split(",");
         for(int  c=0;c<nums.length;c++) {
@@ -104,6 +107,7 @@ public class PaiBanController {
     }
     //新增
     @PostMapping
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<String> save(@RequestBody PaiBan paiBan){
         paiBanService.save(paiBan);
         return R.success("添加成功");
