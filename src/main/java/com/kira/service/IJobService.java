@@ -6,7 +6,7 @@ import com.kira.domain.Job;
 import javax.jnlp.BasicService;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-2715:00
  */
 public interface IJobService extends IService<Job> {

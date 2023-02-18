@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-2715:16
  */
 @Slf4j
@@ -185,5 +185,12 @@ public class EmployeeController {
     public R<String> loginOut(HttpServletRequest request){
         request.getSession().removeAttribute("employee");
         return R.success("退出成功");
+    }
+
+    //修改密码
+    @PutMapping("/editPwd")
+    public R<String> updatePwd(@RequestBody Employee employee){
+        employeeService.updateById(employee);
+        return R.success("修改成功！");
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @author shkstart
+ * @author Kira
  * @create 2023-01-2916:01
  */
 @Slf4j
@@ -84,7 +84,7 @@ public class StoreController {
     public R<String> deleteByIds(String id){
         String[] nums = id.split(",");
         for(int  c=0;c<nums.length;c++) {
-            storeService.removeById(nums[c]);
+            storeService.removeById(Integer.parseInt(nums[c]));
         }
         return R.success("删除成功");
     }
