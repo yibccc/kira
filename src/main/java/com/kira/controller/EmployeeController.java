@@ -125,7 +125,7 @@ public class EmployeeController {
             employee.setEndTime(null);
         }
         if ("" == employee.getPassword()){
-            employee.setPassword("123465");
+            employee.setPassword("123456");
         }
         employeeService.save(employee);
         return R.success("新增成功");
