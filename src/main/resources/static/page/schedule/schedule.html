@@ -386,6 +386,7 @@
             //事件点击——删除事件
             eventClick: info => {
                 alert('你没有权限删除')
+                info.revert()
             },
             //日期点击
             // dateClick: function(info) {
@@ -395,6 +396,7 @@
             //选择区域添加事件
             select:info => {
                 alert('你没有权限添加班次')
+                info.revert()
             },
 
             // 获取要显示的数据  返回的是json格式
@@ -432,11 +434,13 @@
             // 事件编辑长度时
             eventResize: info => {
                 alert('你没有权限修改班次')
+                info.revert()
             },
 
             // 事件拖动时
             eventDrop: info => {
                 alert('你没有权限拖动班次')
+                info.revert()
             },
             //对于返回的数据，如果需要重新组织内容，则使用事件数据转换方法
             // eventDataTransform: function(data) {
