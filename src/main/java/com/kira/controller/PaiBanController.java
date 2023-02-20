@@ -42,13 +42,13 @@ public class PaiBanController {
 
     //输出排班表
     @GetMapping("/list")
-//    @Cacheable(value = "paibanDateCache",key = "#date")
+    @Cacheable(value = "paibanDateCache",key = "#date")
     public R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
         String dateEnd = getLastDayOfWeek(date);
         int page = 1;
-        int pageSize = 10000;
+        int maxSize = 10000;
         //分页构造器
-        Page<PaiBan> pageInfo = new Page(page,pageSize);
+        Page<PaiBan> pageInfo = new Page(page,maxSize);
         Page<PaiBanDto> paiBanDtoPage = new Page<>();
 
         //条件构造器

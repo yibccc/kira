@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @ServletComponentScan
 @Slf4j
-@EnableCaching
+//@EnableCaching
 public class SsmpApplication {
 
     public static void main(String[] args) {

@@ -50,7 +50,11 @@
 //                "/**/*.html",
 //                "/**/*.png",
 //                "/**/*.ttf",
-//                "/**/*.woff"
+//                "/**/*.woff",
+//                "/doc.html",
+//                "webjars/**",
+//                "/swagger-resources",
+//                "/v2/api-docs"
 //        };
 //
 //        //判断是否需要处理
