@@ -480,7 +480,7 @@
 				let end=dateForm(info.event.end).split(' ')
 				info={id:info.event.id,date:start[0],startTime:start[1],endTime:end[1]}
 				console.log(info)
-				if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true & compareTime(ends[1],'06:00:00')==false){
+				if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true & compareTime(end[1],'06:00:00')==false){
 					$.ajax({
 						url:'/paiban',
 						type:'PUT',
