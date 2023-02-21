@@ -77,8 +77,8 @@
                     }
                 }
                 const validatePassword = (rule, value, callback) => {
-                    if (value.length < 6) {
-                        callback(new Error('密码必须在6位以上'))
+                    if (value.length < 6 || value.length >16) {
+                        callback(new Error('密码必须在6-16位之间！'))
                     } else {
                         callback()
                     }
