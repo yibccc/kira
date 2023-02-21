@@ -100,7 +100,7 @@ public class EmployeeController {
     public R<String> deleteByIds(String id){
         String[] nums = id.split(",");
         for(int  c=0;c<nums.length;c++) {
-            employeeService.removeById(nums[c]);
+            employeeService.remove(Integer.parseInt(nums[c]));
         }
         return R.success("删除成功");
     }

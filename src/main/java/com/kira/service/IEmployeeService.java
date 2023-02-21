@@ -1,6 +1,7 @@
 package com.kira.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.kira.controller.utils.R;
 import com.kira.domain.Employee;
 
 /**
@@ -8,8 +9,14 @@ import com.kira.domain.Employee;
  * @create 2023-01-2715:11
  */
 public interface IEmployeeService extends IService<Employee> {
-//    IPage<Employee> getPage(int currentPage,int pageSize);
-    //新增员工，同时插入偏好数据;
-//    public void saveWithPreference();
 
+    //    @Autowired
+    //    private EmployeeDao employeeDao;
+    //    @Override
+    //    public IPage<Employee> getPage(int currentPage, int pageSize) {
+    //        IPage page = new Page(currentPage,pageSize);
+    //        employeeDao.selectPage(page,null);
+    //        return page;
+    //    }
+    public void remove(int id);
 }
