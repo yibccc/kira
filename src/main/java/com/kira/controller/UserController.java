@@ -29,6 +29,7 @@ public class UserController {
     public R<User> login(HttpServletRequest request, @RequestBody User user){
         //login
         String password = user.getPassword();
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getUsername,user.getUsername());
@@ -56,6 +57,9 @@ public class UserController {
     @PostMapping("/register")
     public R<String> save(@RequestBody User user){
         log.info("新增user，user信息：｛｝",user.toString());
+        String password = user.getPassword();
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
+        user.setPassword(password);
         userService.save(user);
         return R.success("注册成功");
     }

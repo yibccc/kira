@@ -35,9 +35,7 @@
                     ></i>
                 </el-input>
                 <div class="tableLab">
-                    <span class="span-btn delBut non" @click="deleteHandle('批量', null)" :disabled="this.checkList.length === 0">批量删除</span>
-                    <span class="span-btn blueBug non" @click="statusHandle('1')" :disabled="this.checkList.length === 0">批量启用</span>
-                    <span style="border:none;" class="span-btn delBut non" @click="statusHandle('0')" :disabled="this.checkList.length === 0">批量停用</span>
+                    <span style="margin-right: 14px" class="delBut non" @click="deleteEmployeeHandle('批量', null)" :disabled="this.checkList.length === 0">批量删除</span>
                     <el-button
                         type="primary"
                         @click="addEmployeeHandle('add')"
@@ -83,7 +81,6 @@
                     label="工作门店"
                     align="center"
                 ></el-table-column>
-
                 <el-table-column
                         label="偏好"
                         width="140"
@@ -95,7 +92,6 @@
                                 size="small"
                                 class="greenBug non"
                                 @click.native="showFlavor(scope.row)"
-                                :class="{notAdmin:user !== 'admin'}"
                         >
                             查看偏好
                         </el-button>
@@ -106,12 +102,15 @@
                         :visible.sync="DialogVisible"
                         width="30%"
                         :before-close="handleClose"
+                        :append-to-body="true"
                 >
-                    <el-form>
-                        <el-form-item label="工作日偏好">flavorForm.workday</el-form-item>
-                        <el-form-item label="工作时间偏好">flavorFrom.worktime</el-form-item>
-                        <el-form-item label="班次时长偏好">flavorForm.duration</el-form-item>
-                    </el-form>
+                    <div class="form">
+                        <el-form ref="flavorForm" :model="flavorForm">
+                            <el-form-item label="工作日偏好：">{{workday}}</el-form-item>
+                            <el-form-item label="工作时间偏好：">{{startWorktime}}-{{endWorktime}}</el-form-item>
+                            <el-form-item label="班次时长偏好：">{{duration}}个小时</el-form-item>
+                        </el-form>
+                    </div>
                 </el-dialog>
 
                 <el-table-column
@@ -133,7 +132,6 @@
                             size="small"
                             class="blueBug"
                             @click="addEmployeeHandle(scope.row.id)"
-                            :class="{notAdmin:user !== 'admin'}"
                         >
                             编辑
                         </el-button>
@@ -151,7 +149,6 @@
                             size="small"
                             class="delBut non"
                             @click="deleteEmployeeHandle('单删',scope.row.id)"
-                            :class="{notAdmin:user !== 'admin'}"
                         >
                             删除
                         </el-button>
@@ -192,10 +189,24 @@
                     show:false,
                     DialogVisible:false,
                     flavorForm:{
-                        workday:[],
-                        worktime:'',
-                        duration:''
-                    }
+                        checkWorkday:[],
+                        startTime:'',
+                        endTime:'',
+                        checkDuration:''
+                    },
+                    workdayOption:[
+                        {id:1,value:'星期一'},
+                        {id:2,value:'星期二'},
+                        {id:3,value:'星期三'},
+                        {id:4,value:'星期四'},
+                        {id:5,value:'星期五'},
+                        {id:6,value:'星期六'},
+                        {id:7,value:'星期日'},
+                    ],
+                    startWorktime:'',
+                    endWorktime:'',
+                    duration:'',
+                    workday:[],
                 }
             },
             computed:{},
@@ -206,7 +217,6 @@
             mounted(){},
             methods: {
                 async init () {
-                    // console.log('run');
                     const params = {
                         page: this.page,
                         pageSize: this.pageSize,
@@ -229,6 +239,7 @@
                 handleClose(done){
                     this.$confirm('确定关闭吗').then(() => {
                         // function(done)，done 用于关闭 Dialog
+                        this.workday=[]
                         done();
                     }).catch(() => {
                         console.log("点击确定时触发");
@@ -236,6 +247,7 @@
                 },
                 //添加
                 addEmployeeHandle(st){
+                    console.log('这里'+st)
                     if(st === 'add'){
                         window.parent.menuHandle({
                             id:'2',
@@ -256,23 +268,37 @@
                         this.DialogVisible=true
                         if(String(res.code) === '1'){
                             this.flavorForm = {...res.data}
+                            console.log(this.flavorForm)
+                            let tempWorkday = []
+                            let strCheckWorkday = this.flavorForm.checkWorkday.split(',').map(Number)
+                            for (let i = 0; i < strCheckWorkday.length; i++) {
+                                tempWorkday[strCheckWorkday[i]]=true
+                            }
+                            for (let i = 0; i < this.workdayOption.length; i++) {
+                                if(tempWorkday[this.workdayOption[i].id]){
+                                    this.workday.push(this.workdayOption[i].value)
+                                }
+                            }
+                            this.startWorktime = this.flavorForm.startTime
+                            this.endWorktime = this.flavorForm.endTime
+                            this.duration = this.flavorForm.checkDuration
+                            console.log(this.workday)
                         }else{
                             this.$message.error(res.msg || '操作失败')
                         }
                     })
-
                 },
                 //状态修改
-                statusHandle (row) {
+                statusHandle(row) {
                     this.id = row.id
                     this.status = row.status
                     this.$confirm('确认调整该员工的状态?', '提示', {
                       'confirmButtonText': '确定',
                       'cancelButtonText': '取消',
                       'type': 'warning'
-                      }).then(() => {
-                      enableOrDisableEmployee({ 'id': this.id, 'status': !this.status ? 1 : 0 }).then(res => {
-                        console.log('enableOrDisableEmployee',res)
+                      }).then(() =>{
+                      enableOrDisableEmployee({'id': this.id, 'status': !this.status ? 1 : 0 }).then(res => {
+                        console.log('id是'+this.id)
                         if (String(res.code) === '1') {
                           this.$message.success('员工状态更改成功！')
                           this.handleQuery()

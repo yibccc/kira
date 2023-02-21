@@ -1,4 +1,3 @@
-
 function isValidUsername (str) {
   return ['admin', 'editor'].indexOf(str.trim()) >= 0;
 }
