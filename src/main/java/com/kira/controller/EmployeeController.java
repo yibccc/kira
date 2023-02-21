@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +41,6 @@ public class EmployeeController {
 
     //分页查询
     @GetMapping("/page")
-    @Cacheable(value = "pageEmployeeCache",key = "#page")
     public R<Page> page(int page, int pageSize, String name){
         log.info("page = {},pageSize = {},name = {}",page,pageSize,name);
         //分页构造器
@@ -82,7 +82,6 @@ public class EmployeeController {
 
     //根据id修改
     @PutMapping
-    @CacheEvict(value = "pageEmployeeCache",allEntries = true)
     public R<String> update(@RequestBody Employee employee){
         log.info(employee.toString());
         employeeService.updateById(employee);
@@ -98,7 +97,6 @@ public class EmployeeController {
 
 //    批量删除
     @DeleteMapping
-    @CacheEvict(value = "pageEmployeeCache",allEntries = true)
     public R<String> deleteByIds(String id){
         String[] nums = id.split(",");
         for(int  c=0;c<nums.length;c++) {
@@ -109,22 +107,21 @@ public class EmployeeController {
 
     //新增
     @PostMapping
-    @CacheEvict(value = "pageEmployeeCache",allEntries = true)
     public R<String> save(@RequestBody Employee employee){
         log.info("新增员工，员工信息：",employee.toString());
 //        if(null == employee.getCheckDuration()){
 //            employee.setCheckDuration(4);
 //        }
-        if("" == employee.getCheckWorkday()){
+        if("".equals(employee.getCheckWorkday())){
             employee.setCheckWorkday(null);
         }
-        if("" == employee.getStartTime()){
+        if("".equals(employee.getStartTime())){
             employee.setStartTime(null);
         }
-        if ("" == employee.getEndTime()){
+        if ("".equals(employee.getEndTime())){
             employee.setEndTime(null);
         }
-        if ("" == employee.getPassword()){
+        if (null == (employee.getPassword())){
             employee.setPassword("123456");
         }
         employeeService.save(employee);
@@ -136,7 +133,6 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public R<Employee> getById(@PathVariable Integer id){
         Employee employee  = employeeService.getById(id);
-
         return R.success(employee);
     }
 
@@ -144,6 +140,18 @@ public class EmployeeController {
     @GetMapping("/flavors/{id}")
     public R<Employee> getFlavorsById(@PathVariable Integer id){
         Employee employee = employeeService.getById(id);
+        if(null == employee.getCheckDuration()){
+            employee.setCheckDuration(4);
+        }
+        if(null == employee.getCheckWorkday()){
+            employee.setCheckWorkday("1,2,3,4,5,6,7");
+        }
+        if(null == employee.getStartTime()){
+            employee.setStartTime("06:00:00");
+        }
+        if (null == employee.getEndTime()){
+            employee.setEndTime("22:00:00");
+        }
         return R.success(employee);
     }
 

@@ -24,7 +24,7 @@ function enableOrDisableEmployee (params) {
     })
   }
   
-  // 修改---添加员工
+  // 修改---编辑员工
   function editEmployee (params) {
     return $axios({
       url: '/employees',
@@ -63,7 +63,7 @@ function enableOrDisableEmployee (params) {
   // 查询详情
 function queryEmployeeById (id) {
   return $axios({
-    url: '/employees/${id}',
+    url: `/employees/${id}`,
     method: 'get'
   })
 }
@@ -71,7 +71,28 @@ function queryEmployeeById (id) {
 //获取偏好
 function getFlavorById(id){
   return $axios({
-    url:'/flavors/${id}',
+    url:`/employees/flavors/${id}`,
     method:'get'
+  })
+}
+
+function loginApi(data) {
+  return $axios({
+    'url': '/employees/login',
+    'method': 'post',
+    data
+  })
+}
+function logoutApi(){
+  return $axios({
+    'url': '/employees/logout',
+    'method': 'post',
+  })
+}
+function editPwd(params){
+  return $axios({
+    url:'/employees',
+    method:'put',
+    data:{...params}
   })
 }

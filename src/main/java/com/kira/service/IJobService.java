@@ -3,7 +3,6 @@ package com.kira.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kira.domain.Job;
 
-import javax.jnlp.BasicService;
 
 /**
  * @author Kira

@@ -8,6 +8,7 @@ import com.kira.domain.Store;
 import com.kira.service.IJobService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class JobController {
     private IJobService jobService;
 
     @GetMapping("/list")
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<List<Job>> list(){
         LambdaQueryWrapper<Job> queryWrapper= new LambdaQueryWrapper<>();
         List<Job> list = jobService.list(queryWrapper);

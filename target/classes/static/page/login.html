@@ -22,12 +22,6 @@
             text-align: center;
             margin-bottom: 45px;
         }
-        .register{
-            color:#2b3c5a;
-        }
-        .register:hover{
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -35,6 +29,34 @@
         <div class="login-box">
             <img src="../images/login/login.png" alt="">
             <div class="login-form">
+                <el-dialog
+                        title="身份验证"
+                        :visible.sync="userDialogVisible"
+                        width="30%"
+                        top="200px"
+                        :before-close="closeHandle"
+                        :close-on-click-modal="false"
+                        :close-on-press-escape="false"
+                >
+                    <div class="form">
+                        <el-form ref="userForm" :model="userForm" style="height: 150px">
+                            <el-form-item label="请选择你的身份：">
+                                <el-radio-group v-model="userForm.charactor">
+                                    <el-radio label="super">我是管理员</el-radio>
+                                    <el-radio label="common">我是员工</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                    <div class="box">
+                        <el-button
+                                type="primary"
+                                @click="userHandle(userForm.charactor)"
+                        >
+                            确定
+                        </el-button>
+                    </div>
+                </el-dialog>
                 <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
                     <div class="logo">智能排班系统</div>
                     <el-form-item prop="username">
@@ -68,9 +90,13 @@
             data(){
                 return{
                     loginForm:{
-                        username:'admin',
-                        password:'123456'
+                        username:'',
+                        password:''
                     },
+                    userForm:{
+                        charactor:'',
+                    },
+                    userDialogVisible:true,
                     loading:false
                 }
             },
@@ -113,9 +139,23 @@
                         }
                     })
                 },
+                userHandle(){
+                    if(this.userForm.charactor=='super'){
+                        this.userDialogVisible=false
+                    }else{
+                        this.userDialogVisible=false
+                        //跳转到员工登录页面
+                        window.location.href='./employeeLogin.html'
+                    }
+                },
+                closeHandle(){
+                    if(this.userForm.charactor==''){
+                        alert('请选择你的身份，确定后即可登录！')
+                    }
+                },
                 handleRegister(){
                     window.location.href='./register.html'
-                }
+                },
             },
         })
     </script>
