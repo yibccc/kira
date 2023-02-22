@@ -18,5 +18,6 @@ public interface IEmployeeService extends IService<Employee> {
     //        employeeDao.selectPage(page,null);
     //        return page;
     //    }
-    public void remove(int id);
+
+    void removeWithPaiban(int id);
 }

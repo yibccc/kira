@@ -82,6 +82,7 @@ public class EmployeeController {
 
     //根据id修改
     @PutMapping
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<String> update(@RequestBody Employee employee){
         log.info(employee.toString());
         employeeService.updateById(employee);
@@ -97,10 +98,12 @@ public class EmployeeController {
 
 //    批量删除
     @DeleteMapping
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<String> deleteByIds(String id){
         String[] nums = id.split(",");
         for(int  c=0;c<nums.length;c++) {
-            employeeService.remove(Integer.parseInt(nums[c]));
+            employeeService.removeById(nums[c]);
+            employeeService.removeWithPaiban(Integer.parseInt(nums[c]));
         }
         return R.success("删除成功");
     }
@@ -157,6 +160,7 @@ public class EmployeeController {
 
     //用户列表
     @GetMapping("/list")
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<List<Employee>> list(String date,String startTime,String endTime){
         //条件构造器
         LambdaQueryWrapper<Employee> queryWrapper= new LambdaQueryWrapper<>();

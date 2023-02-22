@@ -8,6 +8,7 @@ import com.kira.domain.Store;
 import com.kira.service.IStoreService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,6 +91,7 @@ public class StoreController {
     }
     //根据id修改
     @PutMapping
+    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<String> update(@RequestBody Store store){
         log.info(store.toString());
         storeService.updateById(store);

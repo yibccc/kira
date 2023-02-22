@@ -42,7 +42,7 @@ public class PaiBanController {
 
     //输出排班表
     @GetMapping("/list")
-    @Cacheable(value = "paibanDateCache",key = "#date")
+    @Cacheable(value = "paibanDateCache",key = "#date+'_'+#selectJobId+'_'+#storeId")
     public R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
         String dateEnd = getLastDayOfWeek(date);
         int page = 1;

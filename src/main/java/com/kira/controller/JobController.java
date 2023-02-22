@@ -29,7 +29,6 @@ public class JobController {
     private IJobService jobService;
 
     @GetMapping("/list")
-    @CacheEvict(value = "paibanDateCache",allEntries = true)
     public R<List<Job>> list(){
         LambdaQueryWrapper<Job> queryWrapper= new LambdaQueryWrapper<>();
         List<Job> list = jobService.list(queryWrapper);
