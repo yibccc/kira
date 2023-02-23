@@ -158,6 +158,9 @@
 				<div id="calendar">
 				</div>
 			</div>
+			<div v-if="mouse">
+
+			</div>
 		</div>
 	</div>
 </div>
@@ -209,6 +212,9 @@
 					page: 1,
 					pageSize: 10,
 				}
+			},
+			mouse(){
+				return mouseThrough().bool
 			},
 			//获取职位
 			getJobsList() {
@@ -358,7 +364,7 @@
 			minTime:'06:00:00',   //左侧时间从几点开始
 			maxTime:'22:00:00',   //左侧时间从几点结束
 			dragRevertDuration:1000,//设置一秒如果拖拽不成功则回复原状
-			eventLimit: true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
+			//eventLimit:true, //如果数据过多超过日历格子显示的高度时，多出去的数据不会将格子挤开，而是显示为 +...more ，点击后才会完整显示所有的数据
 
 			//事件点击——删除事件
 			eventClick: info => {
@@ -371,6 +377,13 @@
 					})
 					calendar.refetchEvents()
 				}
+			},
+			//鼠标划过
+			eventMouseEnter:info=>{
+				mouseThrough(true,info.title,info.start,info.end)
+			},
+			eventMouseLeave:info=>{
+				mouseThrough(false,info.title,info.start,info.end)
 			},
 			//日期点击
 			// dateClick: function(info) {
@@ -535,6 +548,14 @@
 		var b1=date.setHours(b[0],b[1],b[2])
 		console.log(a1,b1)
 		return a1<=b1;
+	}
+
+	//
+	function mouseThrough(bool,title,start,end){
+		this.title=title;
+		this.start=start;
+		this.end=end;
+		return bool;
 	}
 </script>
 </html>
