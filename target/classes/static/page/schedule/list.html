@@ -464,13 +464,18 @@
 					let start=dateForm(info.event.start).split(' ')
 					let end=dateForm(info.event.end).split(' ')
 					info={id:info.event.id,date:start[0],startTime:start[1],endTime:end[1]}
-					$.ajax({
-						url:'/paiban',
-						type:'PUT',
-						data:JSON.stringify(info),
-						dataType:'json',
-						contentType: "application/json"
-					})
+					if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true & compareTime(end[1],'06:00:00')==false){
+						$.ajax({
+							url:'/paiban',
+							type:'PUT',
+							data:JSON.stringify(info),
+							dataType:'json',
+							contentType: "application/json"
+						})
+					}else{
+						alert('不得在早上6点以前或晚上10点以后安排班次！')
+						calendar.refetchEvents()
+					}
 				}
 			},
 
@@ -480,7 +485,7 @@
 				let end=dateForm(info.event.end).split(' ')
 				info={id:info.event.id,date:start[0],startTime:start[1],endTime:end[1]}
 				console.log(info)
-				if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true & compareTime(ends[1],'06:00:00')==false){
+				if(compareTime(start[1],'6:00:00')==false & compareTime(end[1],'22:00:00')==true & compareTime(start[1],'21:00:00')==true & compareTime(end[1],'06:00:00')==false){
 					$.ajax({
 						url:'/paiban',
 						type:'PUT',
@@ -529,7 +534,7 @@
 		var a1=date.setHours(a[0],a[1],a[2])
 		var b1=date.setHours(b[0],b[1],b[2])
 		console.log(a1,b1)
-		return a1<b1;
+		return a1<=b1;
 	}
 </script>
 </html>
