@@ -158,8 +158,18 @@
 				<div id="calendar">
 				</div>
 			</div>
-			<div v-if="mouse">
-
+			<div class="event-detail-wrap" id="event-detail">
+				<div class="detail-info-list">
+					<div class="js_event_detail_time"></div>
+					<div class="js_event_detail_name"></div>
+					<div class="js_event_detail_job"></div>
+				</div>
+				<div class="action-group">
+					<a href="#">日程详情</a>
+					<a href="#">复制</a>
+					<a href="#">编辑</a>
+					<a href="#">删除</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -212,9 +222,6 @@
 					page: 1,
 					pageSize: 10,
 				}
-			},
-			mouse(){
-				return mouseThrough().bool
 			},
 			//获取职位
 			getJobsList() {
@@ -378,13 +385,13 @@
 					calendar.refetchEvents()
 				}
 			},
-			//鼠标划过
-			eventMouseEnter:info=>{
-				mouseThrough(true,info.title,info.start,info.end)
-			},
-			eventMouseLeave:info=>{
-				mouseThrough(false,info.title,info.start,info.end)
-			},
+			// //鼠标划过
+			// eventMouseEnter:info=>{
+			// 	mouseThrough(true,info.title,info.start,info.end)
+			// },
+			// eventMouseLeave:info=>{
+			// 	mouseThrough(false,info.title,info.start,info.end)
+			// },
 			//日期点击
 			// dateClick: function(info) {
 			// 	add(info.dateStr);
@@ -512,6 +519,35 @@
 				}
 
 			},
+			eventRender: function (info) {
+				var eventStart = new Date(info.event.start).getHours()+':'+ new Date(info.event.start).getMinutes(),
+						eventEnd = new Date(info.event.end).getHours()+':'+ new Date(info.event.end).getMinutes(),
+						eventTitle = info.event.title,
+						eventTitleArray = eventTitle.split('-');
+				$(".js_event_detail_time").text("时间：" +eventStart +"-" + eventEnd)
+				$(".js_event_detail_name").text(eventTitleArray[0])
+				$(".js_event_detail_job").text(eventTitleArray[1])
+				$(info.el).qtip({
+					content: {
+						text:  $('#event-detail') //要提示的内容，就是上面创建的那个浮层
+					},
+					position: {
+						my: 'left top', //箭头的位置
+						at: 'top right',//提示框的位置
+					},
+					show: {
+						solo: true //保证每次只显示一个提示框
+					},
+					hide: {
+						fixed: true, //能够操作提示框
+						delay: 600,//多久之后隐藏提示框
+						event:' mouseleave',
+					},
+					style: {
+						classes: 'qtip-event-detail' //自定义的弹层样式
+					}
+				});
+			},
 			//对于返回的数据，如果需要重新组织内容，则使用事件数据转换方法
 			// eventDataTransform: function(data) {
 			// 	data.title = data.title ;
@@ -551,11 +587,11 @@
 	}
 
 	//
-	function mouseThrough(bool,title,start,end){
-		this.title=title;
-		this.start=start;
-		this.end=end;
-		return bool;
-	}
+	// function mouseThrough(bool,title,start,end){
+	// 	this.title=title;
+	// 	this.start=start;
+	// 	this.end=end;
+	// 	return bool;
+	// }
 </script>
 </html>

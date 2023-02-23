@@ -38,3 +38,36 @@
     table-layout: fixed;
     text-align: center;
 }
+.qtip-event-detail {
+    width: 255px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    border-top:3px solid #2878f0;
+    padding:2px;
+    box-shadow: 0 0 8px rgba(0,0,0,.2);
+}
+.qtip-event-detail .qtip-tip{
+    top: 6px !important;
+}
+.event-detail-wrap{
+    display: none;
+    font-size: 14px;
+    line-height: 26px;
+    color: #666
+}
+.detail-info-list{
+    color: #999;
+}
+.event-detail-wrap .action-group{
+    border-top:1px solid #e0e0e0;
+    padding-top:8px;
+    margin-top: 8px;
+    text-align: right;
+}
+.event-detail-wrap .action-group a{
+    color: #2878f0;
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 6px;
+}
