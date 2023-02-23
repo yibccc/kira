@@ -1,6 +1,8 @@
 package com.zpq.pojo;
 
 
+import lombok.Data;
+
 public class Sailing {
     private Integer id;
     private int employeeId;

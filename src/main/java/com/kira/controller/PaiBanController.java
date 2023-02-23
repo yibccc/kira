@@ -45,8 +45,13 @@ public class PaiBanController {
     @GetMapping("/list")
     @Cacheable(value = "paibanDateCache",key = "#date+'_'+#selectJobId+'_'+#storeId")
     public R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
-        Scheduling scheduling = new Scheduling();
-        scheduling.getDayScheduling(7,storeId);
+        LambdaQueryWrapper<PaiBan> n = new LambdaQueryWrapper();
+        n.eq(PaiBan::getDate,date);
+        int count = paiBanService.count(n);
+        if(count == 0) {
+            Scheduling scheduling = new Scheduling();
+            scheduling.getDayScheduling(7, storeId);
+        }//判断是否已存在当天的排班
         String dateEnd = getLastDayOfWeek(date);
         int page = 1;
         int maxSize = 10000;
