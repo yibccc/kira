@@ -9,6 +9,7 @@ import com.kira.dto.PaiBanDto;
 import com.kira.service.IEmployeeService;
 import com.kira.service.IJobService;
 import com.kira.service.IPaiBanService;
+import com.zpq.scheduling.Scheduling;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +45,8 @@ public class PaiBanController {
     @GetMapping("/list")
     @Cacheable(value = "paibanDateCache",key = "#date+'_'+#selectJobId+'_'+#storeId")
     public R<Page> printDay(Integer storeId, String date,Integer selectJobId) throws ParseException {
+        Scheduling scheduling = new Scheduling();
+        scheduling.getDayScheduling(7,storeId);
         String dateEnd = getLastDayOfWeek(date);
         int page = 1;
         int maxSize = 10000;
@@ -54,6 +57,7 @@ public class PaiBanController {
         //条件构造器
         LambdaQueryWrapper<PaiBan> queryWrapper = new LambdaQueryWrapper();
         //过滤条件
+        queryWrapper.ne(PaiBan::getEmployeeId,0);
         queryWrapper.eq(PaiBan::getStoreId, storeId);
         queryWrapper.between(PaiBan::getDate,date,dateEnd);
         if (null != selectJobId){

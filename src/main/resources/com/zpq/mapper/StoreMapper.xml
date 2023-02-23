@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zpq.mapper.StoreMapper">
+    <!-- Store getStoreById(@Param("storeId") Integer storeId); -->
+    <select id="getStoreById" resultType="Store">
+        select * from store where id = #{storeId}
+    </select>
+
+    <!-- int getSizeByStoreId(@Param("storeId") Integer storeId); -->
+    <select id="getSizeByStoreId" resultType="double">
+        select size from store where id = #{storeId}
+    </select>
+    <!-- int getEachAreaByStoreId(@Param("storeId") int storeId); -->
+    <select id="getEachAreaByStoreId" resultType="int">
+        select each_manage_area from store where id = #{storeId}
+    </select>
+    <!-- getEachCleanByStoreId -->
+    <select id="getEachCleanByStoreId" resultType="int">
+        select each_clean_area from store where id = #{storeId}
+    </select>
+    <!-- getEachServeByStoreId -->
+    <select id="getEachServeByStoreId" resultType="float">
+        select each_serve from store where id = #{storeId}
+    </select>
+    <!-- int getDutyNumByStoreId(@Param("storeId") int storeId); -->
+    <select id="getDutyNumByStoreId" resultType="int">
+        select duty_num from store where id = #{storeId}
+    </select>
+    <!-- Time getPrepTimeByStoreId(@Param("storeId") int storeId); -->
+    <select id="getPrepTimeByStoreId" resultType="string">
+        select prep_time from store where id = #{storeId}
+    </select>
+    <!-- Time getClosureTimeByStoreId(@Param("storeId") int storeId); -->
+    <select id="getClosureTimeByStoreId" resultType="string">
+        select closure_time from store where id = #{storeId}
+    </select>
+</mapper>

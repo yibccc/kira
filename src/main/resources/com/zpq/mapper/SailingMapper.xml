@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zpq.mapper.SailingMapper">
+    <insert id="addSailing" useGeneratedKeys="true" keyColumn="id">
+        insert into pai_ban values (null,#{sailing.employeeId},#{sailing.startTime},#{sailing.endTime},#{sailing.storeId},#{sailing.date},#{sailing.jobId})
+    </insert>
+</mapper>
